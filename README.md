@@ -77,6 +77,10 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - Fiscal-period switch, sort, CSV export and **Add Rep** with a period quota. One template powers both AE teams (Strategic, Mid Market).
 - **SDR Team** — meetings are the quota: meetings booked vs. quota with pacing to period end, calls, emails, connect rate, the partner AE each SDR books for, and a live **sourced pipeline** of the deals they created.
 
+### Reports — Q1 Forecast & Slipping Deals
+- **Q1 Forecast** — plan next fiscal quarter from today: a 41-segment attainment gauge, a scenario planner (win rate, weekly pipeline creation, FQ4 slip-in) that re-lights it live, a *Path to quota* waterfall from renewals to the gap, side-by-side scenarios, a bubble map of every Q1 deal and rep readiness by coverage.
+- **Slipping Deals** — every deal whose close date moved, drawn as a trail from first commit to today, a quarter-flow Sankey, why deals slip and slip rate per rep. **Start Review** walks the list deal by deal: keep, push, move to next quarter or mark won, and the whole app updates.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -166,6 +170,19 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   </tr>
 </table>
 
+### Reports
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-q1-forecast.png" alt="Q1 Forecast" /><p align="center"><sub><b>Q1 Forecast</b> — gauge, scenario planner, path to quota</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-slipping-deals.png" alt="Slipping Deals" /><p align="center"><sub><b>Slipping Deals</b> — slip trail from first commit to today</sub></p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-slip-review.png" alt="Slip review" /><p align="center"><sub><b>Slip review</b> — recommit deal by deal</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/mobile-q1-forecast.png" alt="Q1 Forecast on mobile" /><p align="center"><sub><b>Mobile</b> — the planner on a phone</sub></p></td>
+  </tr>
+</table>
+
 ### Mobile
 
 <img src="./docs/screenshots/mobile-showcase.png" alt="ZeroCRM on mobile: pipeline, company detail bottom sheet, navigation drawer and filters" width="100%" />
@@ -235,7 +252,8 @@ zerocrm/
 │   │   ├── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
 │   │   ├── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
 │   │   ├── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
-│   │   └── team/                 # strategic-aes · mid-market · sdr-team (one TeamPage template)
+│   │   ├── team/                 # strategic-aes · mid-market · sdr-team (one TeamPage template)
+│   │   └── reports/              # q1-forecast · slipping-deals
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -247,6 +265,7 @@ zerocrm/
 │   ├── contacts/                 # Contact card, grid + A–Z index, list view, contact sheet
 │   ├── sequences/                # Sequence list/detail, step cards, step editor, enroll dialog
 │   ├── team/                     # Team template (rep card, leaderboard, rep sheet) + sdr/ variant
+│   ├── reports/                  # q1/ (gauge, waterfall, deal map) · slipping/ (slip trail, sankey, review)
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -316,6 +335,7 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Contacts with cards, list view and A–Z index
 - [x] Email Sequences with stepper, step editor and enrollments
 - [x] Team views — Strategic AEs, Mid Market and SDR Team
+- [x] Reports — Q1 Forecast planner and Slipping Deals
 - [ ] Reporting and pipeline views from the sidebar
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering

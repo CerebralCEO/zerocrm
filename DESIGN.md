@@ -80,6 +80,12 @@ colors:
   scrim-modal: "rgba(0,0,0,0.25)"   # + 6px backdrop blur
 
 typography:
+  display-hero:        # the single gauge readout on a report page (Q1 Forecast) — nothing else
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
+    fontSize: 40px
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: -1.2px
   display-metric:
     fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: 28px
@@ -562,6 +568,41 @@ components:
     hero: "'Meetings booked' 28px/600 count with '/quota' in 18px muted; % of quota + pacing % on the right; 34-segment bar"
     figures: "Calls · Emails · Connect rate"
     footer: "partner AE chip ('Books for …') + sourced $ · n deals; 14-week meetings sparkline"
+  radial-gauge:
+    geometry: "semicircle, 41 annular segments (R 148, 24px thick, 0.9° gaps) in a 320-wide viewBox, max 360px"
+    fill: "win-meter ramp (gradientColors) for round(attainment × 41) segments, rest {colors.meter-empty}"
+    marker: "2px {colors.ink} tick for the secured share, rotated into place on --ease-ios (700ms)"
+    readout: "{typography.display-hero} % inside the arc + {typography.label} projected $ + gap line ({colors.alert} short / {colors.meter-green} ahead)"
+    motion: "segments seg-in staggered 14ms; readout numbers count up with useTween"
+  waterfall:
+    height: 280px
+    columns: "six equal columns: sources float on the running total, a restacked total, then the gap (hatched coral) or cushion (hatched green)"
+    bars: "42% of column, max 64px, {rounded.bar}; not-yet-created value = dashed {colors.muted} outline on 4% white"
+    connectors: "1px dashed {colors.hairline-overlay} from each bar top to the next bar"
+    target: "dashed {colors.series-target} line across all columns with inline 'Quota $3.4M'"
+    labels: "value 12px above each bar; name {typography.control} + hint 11px under the baseline (short names on phones)"
+  scenario-tile:
+    look: "8px card, 1px {colors.border-card}; active = #55585c border + {colors.surface-card} fill + 6px {colors.live} dot"
+    content: "name {typography.control} · {typography.metric} $ · 34-segment win-meter-bar · % of quota + gap · 11px assumptions line"
+  bubble-chart:
+    axes: "x = close date (month dividers dashed 2 4), y = win probability 0–100% on hairlines"
+    bubble: "r ∝ √value (max 28px, 18px on phones), fill = stage tag text colour at 18% (32% hover), 1px stroke at 75%, 2px centre dot"
+    hover: "others dim to 35%, chart-tooltip (208px) with value / probability / weighted / close / owner; click opens the deal sheet"
+    labels: "company name beside bubbles ≥ $250K on desktop, flipped left near the edge"
+  slip-trail:
+    row: "grid 260px label · track · 132px values, 52px min (phones: label row over a full-width track)"
+    marks: "11px hollow ring = first commit, 7px rings = intermediate pushes, 12px solid dot ringed in {colors.canvas} = current close"
+    line: "2px, {colors.meter-amber} within quarter / {colors.meter-red} left quarter · repeat · overdue; overdue adds a dashed coral run to Today and a live-pulse dot"
+    axis: "quarter labels ({typography.overline}-style, 11px) on hairline boundaries, months 11px {colors.muted}, a 'Today' pill on {colors.hairline-overlay}"
+    motion: "lines grow-x from the original date (45ms stagger), dots bubble-in after; recommitted rows play row-in"
+  sankey:
+    height: 272px
+    nodes: "8px {colors.body} bars, {rounded.bar}, 14px gaps; label + compact $ outside"
+    ribbons: "cubic bands, {colors.meter-amber} (stayed) / {colors.meter-red} (moved out) at 34% — 55% hovered, 14% others"
+  review-deck:
+    container: "{components.dialog}; progress = one 10×4px pill per deal (done green, current ink, pending empty)"
+    card: "{colors.surface-card} card with date chips (current chip tinted by severity), three figures and a stage tag; enters with deck-in (460ms --ease-ios)"
+    actions: "four 74px action tiles (Keep · +2 weeks · Next quarter · Mark won) + a native date input; toggle-tag reasons"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -752,6 +793,8 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Contacts page** — KPI strip, then a `contact-card` grid (continuous from `md`; on phones grouped under sticky letter/company headers with the `alphabet-index`) or a dense list view (desktop/tablet, horizontal scroll + mouse pan). Persona tags use the tag palette: Champion `tag-land`, Decision maker `tag-blue`, Economic buyer `tag-purple`, Influencer `tag-teal`, Technical `tag-yellow`, Blocker `tag-red`. Relationship strength reuses the `win-meter`; >21 days without a touch reads "Going cold" in `{colors.alert}`.
 - **Team pages** (`components/team`, routes `/team/strategic-aes`, `/team/mid-market`, `/team/sdr-team`, all rendered by `TeamPage`) — AE teams share one template: KPI strip (team closed vs. quota, projected, pipeline coverage, activity), a grid of `rep-card`s, then *Leaderboard* (ranked by attainment) beside *Strategic accounts* (accounts owned by the team with furthest stage, open pipeline and health). The rep sheet reuses the entity-sheet pattern: header + `rep-status` tag, four `action-tile`s (Email · Deals · Forecast · Activity — the last three navigate with that rep's owner filter applied), quota section, open deals, account chips and recent activity. Rosters live in `lib/teams.ts` and reference existing owners, so all numbers stay live; each AE team sets its own `accountsLabel`.
 - **SDR variant** — same page skeleton with meetings as the quota: KPI strip (meetings booked + pacing, pipeline sourced, connect rate, activities), `sdr-card`s, a leaderboard by meeting attainment and a *Sourced pipeline* list (deals an SDR created; values and stages come live from the deals store). The SDR sheet shows meetings, activity tiles, the partner AE and sourced deals; *AE deals* opens the board filtered to the partner.
+- **Q1 Forecast** (`/reports/q1-forecast`, `components/reports/q1`) — next fiscal year's first quarter (FQ1 FY28, Feb–Apr) planned from today: KPI strip (quota, open Q1 pipeline + coverage, projected bookings, days to Q1), the `radial-gauge` with the scenario planner underneath (`segmented-control` presets + three sliders: win rate, weekly pipeline creation, FQ4 slip-in), a `waterfall` *Path to quota* (renewals → weighted open pipeline → FQ4 slip-in → new pipeline × win rate → projected → gap) with `scenario-tile`s, a `bubble-chart` *Q1 deal map*, a *Monthly plan* (stacked pipeline/weighted bars vs. target markers) and *Rep readiness* (coverage meter + Ready ≥1.5× `tag-land` / Building ≥0.75× `tag-yellow` / Thin `tag-red`; tapping a rep re-plans the page for them). Scenario changes glide (bars, tick, tweened numbers); owner changes replay the entrances.
+- **Slipping Deals** (`/reports/slipping-deals`, `components/reports/slipping`) — open deals whose close date has moved later or passed. KPI strip (slipped value, pushed out of quarter, average slip, repeat slippers), the `slip-trail` hero, then *Quarter flow* (`sankey`), *Why deals slip* (reason tags with share bars in the tag's text colour, days lost + pushes) and *Slip by rep* (slip rate meter, top 7 with an *All* toggle). *Start Review* opens the `review-deck`; recommitting writes the new date to the deals store and records the push, so the board, forecast and trail all update.
 - **Email Sequences page** — KPI strip (with `%` suffix values), then a master/detail split: `sequence-row` list (380px) and the detail (title + status pill + goal + `switch`, four stat tiles, `step-card` stepper with *Add step*, and the enrolled list with *Enroll contacts*). Below `lg` it becomes iOS navigation: the list is the root screen and the detail pushes in from the right (`sheet-in`) with a "‹ Sequences" back bar.
 - **Step editor sheet** — `segmented-control` for the step type, `delay-stepper`, subject + message with one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` chips that insert at the cursor, and a live preview rendered for the first enrolled contact. Delete lives bottom-left in `{colors.alert}`.
 - **Contact sheet** — header (52px avatar, name, role · company, star), persona tags, four `action-tile`s, `info-row`s, relationship (28px score, account-touch sparkline, 64-segment meter), open deals and recent activity. *Log Activity* opens the log dialog prefilled with the contact's company.
@@ -816,6 +859,8 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Rule:** every horizontally scrolling region must also be operable with a mouse in a narrow window (tabs, click-drag pan or header wheel) — never rely on touch swipes alone.
 - **Sheets / New Company** → bottom sheets, dismissable by dragging the header down.
 - **Topbar** → hamburger added, user pill shows avatar only.
+- **Q1 Forecast** → gauge/planner, waterfall, deal map and monthly plan stack below `lg`; waterfall labels switch to short names and hints hide on phones; bubbles shrink (max 18px) and lose their labels; rep readiness is one column below `xl` and hides deals / pipeline progressively.
+- **Slipping Deals** → trail rows become label-over-track on phones (value + slip badge beside the name), quarter labels shorten to "FQ3", alternate month labels hide; the three bottom panels stack below `xl`; the review deck is a bottom sheet with a 2×2 action grid.
 - **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; below `sm` risk rows become two-line (company over deal title, value over reason tag).
 
 ### Image Behavior
@@ -830,6 +875,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - Press: `scale: .97` in 90ms; wide list rows highlight instead.
 - New rows: fade/slide in with a 20% indigo wash that settles (1.6s) and scroll into view.
 - Charts: `reveal` 1.1s (clip scaleX from the plot's left edge), `bar-grow` 700ms staggered 90ms, `live-pulse` 2.4s loop on the latest actual, tooltip `pop-in`, values/markers transition 700ms on `--ease-ios` when data changes.
+- Reports: gauge `seg-in` (520ms --ease-pop, 14ms stagger), `useTween` count-ups (700–900ms ease-out cubic), `grow-x` 900ms for slip lines and share bars, `bubble-in` 620ms --ease-pop, `deck-in` 460ms for review cards; slider-driven values transition 700ms on --ease-ios instead of re-animating.
 - Activities: heatmap cells `fade-in` staggered 35ms per week column; agenda swipe tracks 1:1 and springs back 420ms `--ease-ios`; completing an item cross-fades the title to muted + strike-through (300ms).
 - Kanban: `lift` 240ms on pick-up, drop animation 420ms `--ease-ios`, `card-wash` 1.4s on the landed card, drag auto-scroll capped at ~400px/s so a finger at the edge moves one column at a time.
 - Swipe-to-dismiss: 1:1 tracking, 0.2× rubber-band past rest, dismiss past 30% or at > 0.5 px/ms.
@@ -850,7 +896,8 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
 - Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
-- The reporting views (Q1 Forecast, Slipping Deals) and the pipeline destinations have no pages yet (they show "Coming soon").
+- The pipeline destinations (North America, EMEA Enterprise, APAC Expansion) have no pages yet (they show "Coming soon").
+- Q1 renewals ($480K) and the flat $300K rep Q1 quota are plan constants; close-date push history is seeded demo data (new pushes from the review are recorded live).
 - SDR call / email / meeting counts are roster demo data (sourced pipeline is live); FQ4 shows zeros because it hasn't started.
 - Sequences don't actually send email; step stats are demo data.
 - Demo contacts are fictional and use reserved `.example` emails and 555-01xx phone numbers.
