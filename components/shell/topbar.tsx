@@ -25,6 +25,9 @@ const TITLES: Record<string, string> = {
   "/activities": "Activities",
   "/contacts": "Contacts",
   "/sequences": "Email Sequences",
+  "/team/strategic-aes": "Strategic AEs",
+  "/team/mid-market": "Mid Market",
+  "/team/sdr-team": "SDR Team",
 };
 
 export function Topbar() {

@@ -41,9 +41,9 @@ const SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: "Team",
     items: [
-      { label: "Strategic AEs", icon: Target },
-      { label: "Mid Market", icon: LocateFixed },
-      { label: "SDR Team", icon: Users },
+      { label: "Strategic AEs", icon: Target, href: "/team/strategic-aes" },
+      { label: "Mid Market", icon: LocateFixed, href: "/team/mid-market" },
+      { label: "SDR Team", icon: Users, href: "/team/sdr-team" },
     ],
   },
   {
@@ -211,7 +211,7 @@ function SidebarContent({
 
 export function Sidebar() {
   const pathname = usePathname();
-  const active = MAIN.find((i) => i.href && pathname.startsWith(i.href))?.label ?? "";
+  const active = [...MAIN, ...SECTIONS.flatMap((s) => s.items)].find((i) => i.href && pathname.startsWith(i.href))?.label ?? "";
   const navOpen = useCrm((s) => s.navOpen);
   const setNavOpen = useCrm((s) => s.setNavOpen);
   const { panel: swipePanel } = useSwipeDismiss({

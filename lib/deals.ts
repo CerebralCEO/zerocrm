@@ -82,6 +82,10 @@ const SEEDS: Seed[] = [
   ["d-intercom-won", "intercom", "Seat top-up", 54000, "won", "lina", 100, "2026-08-21", "Usage review in Q4", "Product", "2026-08-21"],
   ["d-spotify-won", "spotify", "Podcast analytics", 112000, "won", "hannah", 100, "2026-09-05", "Expansion discovery", "Expansion", "2026-09-05"],
   ["d-paypal-won", "paypal", "Fraud alerts module", 96000, "won", "maria", 100, "2026-09-22", "Security onboarding", "Security", "2026-09-22"],
+  ["d-apple-maps", "apple", "Maps data add-on", 210000, "won", "alex", 100, "2026-08-26", "Rollout with the Maps team", "Exec", "2026-08-26"],
+  ["d-lvmh-clienteling", "lvmh", "Clienteling pilot", 180000, "won", "sarah", 100, "2026-09-08", "Kickoff in Paris", "QBR Call", "2026-09-08"],
+  ["d-disney-ads", "disney", "Ad analytics expansion", 245000, "won", "james", 100, "2026-08-19", "Onboard the ads team", "Demo", "2026-08-19"],
+  ["d-snowflake-market", "snowflake", "Marketplace listing", 120000, "won", "grace", 100, "2026-09-15", "Co-marketing plan", "Pricing", "2026-09-15"],
 ];
 
 const KINDS: DealActivity["kind"][] = ["call", "email", "meeting", "note"];

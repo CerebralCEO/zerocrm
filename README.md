@@ -70,6 +70,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Enrollments** — see who is on which step (active, replied, bounced, finished) and enroll more contacts with search + multi-select.
 - **New Sequence** from Blank, Outbound or Renewal templates (saved as a draft). On phones the detail pushes in like an iOS screen.
 
+### Teams — Strategic AEs, Mid Market & SDR Team
+- **Rep cards** — quota attainment front and centre, projected attainment, an *On track / At risk / Behind* status, pipeline, average win probability, 7-day activity, top deal and a 14-week activity sparkline.
+- **Leaderboard** ranked by attainment and **strategic accounts** the team covers, with furthest stage, open pipeline and health.
+- **Rep profile** — quota progress, open deals, accounts and recent activity; *Deals*, *Forecast* and *Activity* jump to those pages filtered to the rep.
+- Fiscal-period switch, sort, CSV export and **Add Rep** with a period quota. One template powers both AE teams (Strategic, Mid Market).
+- **SDR Team** — meetings are the quota: meetings booked vs. quota with pacing to period end, calls, emails, connect rate, the partner AE each SDR books for, and a live **sourced pipeline** of the deals they created.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -146,6 +153,19 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   </tr>
 </table>
 
+### Teams
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-team.png" alt="Strategic AEs — rep cards" /><p align="center"><sub><b>Strategic AEs</b> — attainment, status, pipeline per rep</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-rep-sheet.png" alt="Rep profile" /><p align="center"><sub><b>Rep profile</b> — quota, deals, accounts, activity</sub></p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-mid-market.png" alt="Mid Market team" /><p align="center"><sub><b>Mid Market</b> — same template, own roster</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-sdr-team.png" alt="SDR Team" /><p align="center"><sub><b>SDR Team</b> — meetings, pacing, sourced pipeline</sub></p></td>
+  </tr>
+</table>
+
 ### Mobile
 
 <img src="./docs/screenshots/mobile-showcase.png" alt="ZeroCRM on mobile: pipeline, company detail bottom sheet, navigation drawer and filters" width="100%" />
@@ -214,7 +234,8 @@ zerocrm/
 │   │   ├── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
 │   │   ├── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
 │   │   ├── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
-│   │   └── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
+│   │   ├── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
+│   │   └── team/                 # strategic-aes · mid-market · sdr-team (one TeamPage template)
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -225,6 +246,7 @@ zerocrm/
 │   ├── activities/               # Feed, swipeable agenda, heatmap, log-activity dialog
 │   ├── contacts/                 # Contact card, grid + A–Z index, list view, contact sheet
 │   ├── sequences/                # Sequence list/detail, step cards, step editor, enroll dialog
+│   ├── team/                     # Team template (rep card, leaderboard, rep sheet) + sdr/ variant
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -239,6 +261,7 @@ zerocrm/
 │   ├── activities.ts             # Activity types, seeded history, agenda, time helpers
 │   ├── contacts.ts               # Contacts, buying roles (fictional, reserved emails/phones)
 │   ├── sequences.ts              # Sequences, steps, enrollments, template rendering
+│   ├── teams.ts                  # Team rosters (territories, quotas) over existing owners
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -292,7 +315,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Activities with agenda, feed and heatmap
 - [x] Contacts with cards, list view and A–Z index
 - [x] Email Sequences with stepper, step editor and enrollments
-- [ ] Team, reporting and pipeline views from the sidebar
+- [x] Team views — Strategic AEs, Mid Market and SDR Team
+- [ ] Reporting and pipeline views from the sidebar
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

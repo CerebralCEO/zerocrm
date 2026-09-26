@@ -547,6 +547,21 @@ components:
   enrollment-row:
     height: "52px min"
     content: "28px avatar · name over role · company · one 10×6px segment per step (done green, current amber, pending empty) · 'Step n/m' · state tag (active blue, replied land, bounced red, finished neutral)"
+  rep-card:
+    backgroundColor: "{colors.surface-card}"
+    border: "1px {colors.border-card} (hover #3a3c3f)"
+    rounded: "{rounded.md}"
+    padding: 16px
+    rows: "44px avatar with an 18px rank badge · name 15px/500 over title · territory · status tag · 'Quota attainment' 28px/600 % (unit 18px muted) with closed-of-quota + projected % · 34-segment win-meter-bar · hairline · Pipeline / Avg win / Activity 7d figures (11px label over 14px/500 value) · top deal + 14-week activity sparkline · 'Open profile ↗'"
+    grid: "auto-fill minmax(300px, 1fr), 12px gap"
+  rep-status:
+    rule: "projected = closed + probability-weighted open pipeline closing in the period; ≥100% On track (tag-land) · ≥70% At risk (tag-yellow) · otherwise Behind (tag-red)"
+    sdr: "pacing = meetings ÷ share of the period elapsed ÷ meeting quota, same thresholds"
+  sdr-card:
+    base: "rep-card"
+    hero: "'Meetings booked' 28px/600 count with '/quota' in 18px muted; % of quota + pacing % on the right; 34-segment bar"
+    figures: "Calls · Emails · Connect rate"
+    footer: "partner AE chip ('Books for …') + sourced $ · n deals; 14-week meetings sparkline"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -735,6 +750,8 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Activities page** — KPI strip (counts, `currency={false}`), then the `feed-item` timeline grouped under sticky `day-header`s with "Show older activity" paging (6 days per page); the right column holds *Today's agenda* (`agenda-row`s with a win-meter of completion) and *Team activity* (`heatmap` + a by-type list with 6px `{colors.spark}` share bars). Company names and deal chips open their sheets; logging an activity inserts it into the feed and the deal sheet's timeline.
 - **`segmented-control`** — the activity-type picker in *Log Activity*; use it for any 2–5 option exclusive choice inside forms. `iconOnly` keeps labels for screen readers (Contacts grid/list switch).
 - **Contacts page** — KPI strip, then a `contact-card` grid (continuous from `md`; on phones grouped under sticky letter/company headers with the `alphabet-index`) or a dense list view (desktop/tablet, horizontal scroll + mouse pan). Persona tags use the tag palette: Champion `tag-land`, Decision maker `tag-blue`, Economic buyer `tag-purple`, Influencer `tag-teal`, Technical `tag-yellow`, Blocker `tag-red`. Relationship strength reuses the `win-meter`; >21 days without a touch reads "Going cold" in `{colors.alert}`.
+- **Team pages** (`components/team`, routes `/team/strategic-aes`, `/team/mid-market`, `/team/sdr-team`, all rendered by `TeamPage`) — AE teams share one template: KPI strip (team closed vs. quota, projected, pipeline coverage, activity), a grid of `rep-card`s, then *Leaderboard* (ranked by attainment) beside *Strategic accounts* (accounts owned by the team with furthest stage, open pipeline and health). The rep sheet reuses the entity-sheet pattern: header + `rep-status` tag, four `action-tile`s (Email · Deals · Forecast · Activity — the last three navigate with that rep's owner filter applied), quota section, open deals, account chips and recent activity. Rosters live in `lib/teams.ts` and reference existing owners, so all numbers stay live; each AE team sets its own `accountsLabel`.
+- **SDR variant** — same page skeleton with meetings as the quota: KPI strip (meetings booked + pacing, pipeline sourced, connect rate, activities), `sdr-card`s, a leaderboard by meeting attainment and a *Sourced pipeline* list (deals an SDR created; values and stages come live from the deals store). The SDR sheet shows meetings, activity tiles, the partner AE and sourced deals; *AE deals* opens the board filtered to the partner.
 - **Email Sequences page** — KPI strip (with `%` suffix values), then a master/detail split: `sequence-row` list (380px) and the detail (title + status pill + goal + `switch`, four stat tiles, `step-card` stepper with *Add step*, and the enrolled list with *Enroll contacts*). Below `lg` it becomes iOS navigation: the list is the root screen and the detail pushes in from the right (`sheet-in`) with a "‹ Sequences" back bar.
 - **Step editor sheet** — `segmented-control` for the step type, `delay-stepper`, subject + message with one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` chips that insert at the cursor, and a live preview rendered for the first enrolled contact. Delete lives bottom-left in `{colors.alert}`.
 - **Contact sheet** — header (52px avatar, name, role · company, star), persona tags, four `action-tile`s, `info-row`s, relationship (28px score, account-touch sparkline, 64-segment meter), open deals and recent activity. *Log Activity* opens the log dialog prefilled with the contact's company.
@@ -792,6 +809,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Toolbar** → *Filters* popover + Export + New Company on one 62px row.
 - **Table** → unchanged grid, horizontal scroll (touch swipe or mouse click-drag with inertia); footer becomes 2×2.
 - **Kanban** → one column per screen (86vw, snap) with `stage-tabs` above; KPI strip 2×2.
+- **Team pages** → rep cards stack one per row on phones; leaderboard hides closed $ below `md`, projected below `sm` and activity below `lg`; the accounts list drops owner, stage and health progressively.
 - **Email Sequences** → master/detail becomes a pushed detail screen below `lg`; detail stat tiles 2×2 below `sm`; steps and enrolled stack into one column below `xl`; enrollment step segments hide below `sm`.
 - **Contacts** → one card per row on phones with sticky section headers and the A–Z index; the list view is replaced by cards below `md`; the view switch hides on phones.
 - **Activities** → single column below `lg` with the agenda + heatmap *first* (what matters today), then the feed; agenda owner avatars hide below `sm`; segmented-control icons hide on phones.
@@ -832,7 +850,8 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
 - Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
-- The team (Strategic AEs, Mid Market, SDR Team), reporting (Q1 Forecast, Slipping Deals) and pipeline sidebar destinations have no pages yet (they show "Coming soon").
+- The reporting views (Q1 Forecast, Slipping Deals) and the pipeline destinations have no pages yet (they show "Coming soon").
+- SDR call / email / meeting counts are roster demo data (sourced pipeline is live); FQ4 shows zeros because it hasn't started.
 - Sequences don't actually send email; step stats are demo data.
 - Demo contacts are fictional and use reserved `.example` emails and 555-01xx phone numbers.
 - Timestamps are timezone-free local strings in the demo data; a real backend must supply the viewer's timezone.
