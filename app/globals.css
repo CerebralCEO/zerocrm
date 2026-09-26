@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — values sampled pixel-by-pixel from the reference
+ * screenshots (1920px wide, 1x).
+ */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Surfaces */
+  --color-app: #161616;
+  --color-sidebar: #171717;
+  --color-panel: #161616;
+  --color-row-selected: #1b1d20;
+  --color-row-hover: #1a1a1b;
+  --color-elevated: #1e1e1e;
+  --color-muted-surface: #2a2a2a;
+  --color-card: #1b1d20;
+  --color-nav-active: #2a2a2a;
+
+  /* Lines */
+  --color-line: #232323;
+  --color-line-strong: #393939;
+  --color-line-control: #2e2e2e;
+  --color-line-card: #2d2f31;
+
+  /* Text */
+  --color-fg: #fafafa;
+  --color-fg-soft: #cfcfcf;
+  --color-fg-nav: #7f7f7f;
+  --color-fg-muted: #666767;
+  --color-fg-faint: #454545;
+
+  /* Accents */
+  --color-primary: #4327fa;
+  --color-primary-dark: #3a1fe6;
+  --color-primary-border: #6b56ff;
+  --color-active: #16c89e;
+  --color-check: #ffdb4b;
+  --color-danger-dot: #f97373;
+
+  /* Meter */
+  --color-meter-red: #f97373;
+  --color-meter-amber: #fbbf24;
+  --color-meter-green: #22c55e;
+  --color-meter-empty: #3a3a3a;
+  --color-meter-track: #282828;
+
+  /* Sparkline */
+  --color-spark: #00b562;
+  --color-spark-dim: #395e4d;
+
+  /* Motion — spring curves are sampled from a damped-spring simulation (see :root). */
+  --animate-fade-in: fade-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-out: fade-out 220ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-sheet-in: sheet-in 520ms var(--ease-ios);
+  --animate-sheet-out: sheet-out 260ms var(--ease-exit);
+  --animate-sheet-up: sheet-up 560ms var(--ease-ios);
+  --animate-sheet-down: sheet-down 280ms var(--ease-exit);
+  --animate-nav-in: nav-in 500ms var(--ease-ios);
+  --animate-nav-out: nav-out 240ms var(--ease-exit);
+  --animate-pop-in: pop-in 360ms var(--ease-pop);
+  --animate-pop-out: pop-out 160ms var(--ease-exit);
+  --animate-check-pop: check-pop 320ms var(--ease-pop);
+  --animate-row-in: row-in 1600ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes sheet-in {
+    from { transform: translate3d(100%, 0, 0); }
+    to { transform: translate3d(0, 0, 0); }
+  }
+  @keyframes sheet-out {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(100%, 0, 0); }
+  }
+  @keyframes sheet-up {
+    from { transform: translate3d(0, 100%, 0); }
+    to { transform: translate3d(0, 0, 0); }
+  }
+  @keyframes sheet-down {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, 100%, 0); }
+  }
+  @keyframes nav-in {
+    from { transform: translate3d(-100%, 0, 0); }
+    to { transform: translate3d(0, 0, 0); }
+  }
+  @keyframes nav-out {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-100%, 0, 0); }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.95); }
+    40% { opacity: 1; }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pop-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.96); }
+  }
+  @keyframes check-pop {
+    from { transform: scale(0.4); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  /* New rows fade in with a soft accent wash that settles into the row's own background. */
+  @keyframes row-in {
+    from { opacity: 0; transform: translate3d(0, -6px, 0); background-color: rgb(67 39 250 / 0.2); }
+    18% { opacity: 1; transform: translate3d(0, 0, 0); background-color: rgb(67 39 250 / 0.2); }
+  }
+}
+
+:root {
+  /* iOS-like critically damped spring (no overshoot) — sheets, drawers. */
+  --ease-ios: linear(0, 0.019, 0.062, 0.121, 0.189, 0.261, 0.333, 0.402, 0.468, 0.53, 0.586, 0.637, 0.684, 0.725, 0.761, 0.794, 0.822, 0.847, 0.868, 0.887, 0.903, 0.917, 0.93, 0.94, 0.949, 0.957, 0.963, 0.969, 0.973, 0.978, 0.981, 0.984, 0.986, 0.989, 0.99, 0.992, 0.993, 0.994, 0.995, 0.996, 1);
+  /* Gentle spring with a ~0.7% overshoot — popovers, menus, press release. */
+  --ease-pop: linear(0, 0.028, 0.094, 0.181, 0.278, 0.377, 0.473, 0.562, 0.643, 0.713, 0.774, 0.825, 0.867, 0.902, 0.930, 0.952, 0.968, 0.981, 0.990, 0.997, 1.002, 1.005, 1.006, 1.007, 1.007, 1.007, 1.007, 1.006, 1.005, 1.005, 1.004, 1.003, 1.003, 1.002, 1.002, 1.001, 1);
+  --ease-exit: cubic-bezier(0.32, 0, 0.67, 0);
+  --default-transition-duration: 180ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-app);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  /* App shell: no whole-page rubber-banding; inner scrollers keep their bounce. */
+  overscroll-behavior: none;
+}
+
+/* No grey tap flash on mobile, and no double-tap-zoom delay on controls. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+a,
+[role="button"],
+[role="row"],
+[role="menuitem"],
+[role="option"],
+[role="checkbox"] {
+  touch-action: manipulation;
+}
+
+/*
+ * iOS-style press feedback: controls dip to 97% while pressed and spring back.
+ * `scale` is its own property, so it never fights Tailwind translate/rotate.
+ * Wide list rows opt out with .no-press (they highlight instead).
+ */
+button:not(.no-press) {
+  transition-property: color, background-color, border-color, outline-color, box-shadow, filter, opacity, scale;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-pop);
+}
+button:not(.no-press):not(:disabled):active {
+  scale: 0.97;
+  transition-duration: 90ms;
+}
+
+/* Radix exit animations are skipped once a panel has been swiped away. */
+[data-swiped] {
+  animation: none !important;
+}
+
+/* Keep scroll gestures inside panels/lists instead of chaining to the page. */
+[cmdk-list],
+[role="menu"],
+[role="listbox"] {
+  overscroll-behavior: contain;
+}
+
+/* Thin, dark scrollbars to match the UI */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2e2e2e transparent;
+}
+
+/* Companies grid: a visible scrollbar so the horizontal overflow is discoverable */
+.table-scroll {
+  scrollbar-color: #4a4a4a transparent;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 999px;
+  border: 2px solid var(--color-app);
+}
+.table-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* iOS zooms into inputs under 16px on focus — keep text inputs at 16px on touch screens. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

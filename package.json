@@ -1,0 +1,50 @@
+{
+  "name": "zerocrm",
+  "version": "0.1.0",
+  "description": "An open-source, pixel-perfect sales CRM pipeline built with Next.js 16, React 19 and Tailwind CSS v4.",
+  "author": "ZeroFounder",
+  "license": "MIT",
+  "keywords": [
+    "crm",
+    "sales",
+    "pipeline",
+    "nextjs",
+    "react",
+    "tailwindcss",
+    "radix-ui",
+    "dashboard",
+    "open-source"
+  ],
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@dicebear/avataaars": "^9",
+    "@dicebear/core": "^9.4.3",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.48.0",
+    "next": "16.3.6",
+    "radix-ui": "^1.6.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "simple-icons": "^16.32.0",
+    "tailwind-merge": "^3.7.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@9.15.4"
+}
