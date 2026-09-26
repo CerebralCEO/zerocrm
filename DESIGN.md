@@ -52,6 +52,12 @@ colors:
   meter-track-border: "#303030"
   spark: "#00b562"
   spark-dim: "#395e4d"
+  # Chart series (forecast)
+  series-closed: "{colors.spark}"                 # actuals / closed won (solid line + 12% area)
+  series-commit: "{colors.meter-amber}"           # commit projection (dashed) / bar segment
+  series-best: "rgba(253,230,138,0.5)"            # best-case upside (dashed, lighter amber)
+  series-pipeline: "{colors.meter-empty}"         # early-stage remainder
+  series-target: "{colors.primary-border}"        # quota / target lines — dashed, never filled
   # Tag system — opaque tinted pills: {bg, border, text}
   tag-pilot: { bg: "#3e291d", border: "#764d35", text: "#eeb390" }
   tag-blue: { bg: "#1d2b3e", border: "#23354c", text: "#bfdbfe" }
@@ -401,6 +407,53 @@ components:
     animation: "lift — scale 1.03, rotate 1.5deg, shadow 0 16px 40px rgba(0,0,0,.55), 240ms --ease-pop"
   deal-card-dimmed:
     opacity: 0.4
+  panel:
+    padding: "18px 16px 16px"
+    title: "{typography.body-strong} {colors.ink}"
+    subtitle: "{typography.label} {colors.muted}, 7px below title"
+    divider: "1px {colors.hairline} between panels (grid gutters are hairlines, not gaps)"
+  chart-legend-item:
+    swatch: "8px dot, or 12px dashed line for projections/targets"
+    typography: "{typography.label} {colors.body}"
+    gap: "6px (items 16px apart)"
+  line-chart:
+    height: "280px (220px below 640px)"
+    padding: "18 16 30 52"
+    grid: "1px {colors.hairline}, 4–5 ticks on clean steps"
+    axis: "{typography.label} {colors.muted}, compact currency"
+    actual: "2px {colors.series-closed} + area at 12% opacity"
+    projection: "2px {colors.series-commit} / 1.5px {colors.series-best}, dash 5 4, 3–3.5px end dots"
+    target: "1px {colors.series-target}, dash 4 4, inline label 'Quota $2.4M'"
+    today: "1px {colors.hairline-overlay} vertical + 'Today' label + live-pulse dot"
+    crosshair: "1px rgba(255,255,255,0.18) + 3.5px dots ringed in {colors.canvas}"
+  chart-tooltip:
+    width: 188px
+    backgroundColor: "{colors.canvas}"
+    border: "1px {colors.hairline-overlay}"
+    rounded: "{rounded.menu}"
+    padding: "10px 12px"
+    shadow: "0 12px 32px rgba(0,0,0,0.5)"
+    rows: "8px dot + {typography.label} {colors.muted} label · {typography.control} {colors.ink} value"
+  stacked-bar:
+    height: 10px
+    gap: 2px
+    track: "{colors.meter-track-bar}"
+    rounded: "{rounded.bar}"
+    marker: "1px vertical line 8px beyond the bar + 11px/500 label in the marker colour"
+  bar-chart:
+    height: 180px
+    barWidth: "42% of column, max 72px"
+    segmentGap: 2px
+    topRadius: "{rounded.bar}"
+    target: "dashed 1px {colors.series-target} across the column"
+    valueLabel: "{typography.control} {colors.ink} 8px above the bar"
+  leaderboard-row:
+    height: "{spacing.row-h}"
+    content: "rank {typography.label} {colors.muted} · 20px avatar · name {typography.body-strong} · value {typography.body} · win-meter · %"
+  risk-row:
+    height: "{spacing.row-h}"
+    content: "logo + company · title · stage tag · reason tag · value · win-meter · close date"
+    reasonTones: "Overdue → tag-red · Low confidence → tag-orange · Closing soon → tag-yellow"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -579,6 +632,11 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **`deal-card`** — the one place the page uses a filled card, because cards are the draggable objects. Overdue close dates switch to `{colors.alert}` with an "Overdue ·" prefix. The ⋯ menu offers Open deal, View company, Move to next stage and Mark as won (a no-drag path for keyboard and touch users).
 - **Drag & drop** — mouse: 6px drag threshold; touch: 180ms long-press (quick swipes still scroll); keyboard: Space to pick up, ←/→ to jump columns, Space/Enter to drop, Esc to cancel, with screen-reader announcements. The overlay is `deal-card-lifted`; the source card dims (`deal-card-dimmed`); the drop settles on `--ease-ios` (420ms) and the landed card plays `card-wash`.
 - **`stage-track`** — five-step progress bar in the deal sheet.
+- **`panel`** (Forecast) — page regions laid out in a CSS grid whose gutters are hairlines; each panel is a title/subtitle header plus content, never a card. Legends sit in the header's right slot.
+- **`line-chart`** — cumulative quota attainment: actuals, projections from *today*, target line, live pulse on the latest actual, week-by-week crosshair (mouse and touch; vertical swipes still scroll the page) and a `chart-tooltip`. Series draw in left→right with `reveal` and replay when the period/owner changes.
+- **`stacked-bar`** — forecast categories (closed → commit → best → pipeline) with a Quota marker above and a *Your call* marker below, followed by one 43px row per category (dot, name, "n deals · hint", value, % of quota) and two `stat-tile`s (Closed + commit, Pipeline coverage coloured ≥2× green / ≥1× amber / <1× alert).
+- **`bar-chart`** — monthly stacked bookings vs. a dashed target; bars rise with `bar-grow`, staggered 90ms.
+- **`leaderboard-row`** / **`risk-row`** — list rows on hairlines; risk rows open the deal sheet.
 - **Activity timeline (deal sheet)** — 28px `surface-raised` icon tiles on a 1px `{colors.hairline-overlay}` spine, `body-copy` text, `label` time.
 
 ### Footer
@@ -587,7 +645,7 @@ The table footer is the only footer: 39px, four equal cells separated by hairlin
 ### Extension patterns for upcoming pages (derived — not yet built)
 These are *compositions of the tokens above* for Deals Board, Forecast, Activities, Contacts and Email Sequences. Build from them; promote each to a real component entry once implemented.
 - **KPI deltas** — when a metric needs a trend, append it to the `kpi-strip` meta line in `label`, coloured `{colors.meter-green}` (up) / `{colors.meter-red}` (down).
-- **Charts** — hairline gridlines `{colors.hairline}`, axis labels `label` `{colors.muted}`, series colours only from `{colors.primary}` (target/quota line), `{colors.spark}` (actual), `{colors.meter-amber}` (best case), `{colors.meter-empty}` (remaining); bars `rounded.bar`; no chart backgrounds, no legends boxed in cards — inline legends with 8px dots.
+- **New charts** — follow `line-chart` / `bar-chart`: hairline gridlines, `label` axes, series colours only from the `series-*` tokens (actual → closed, committed → commit, upside → best, remainder → pipeline, goals → target), no chart backgrounds, no boxed legends. Past = solid, future = dashed.
 - **Timeline (Activities page)** — scale up the deal-sheet activity timeline: day group headers as `section-label`, 32px icon tiles on a 1px `{colors.hairline}` spine, `body-copy` text with bold actor, `label` meta.
 - **Contact card (grid view)** — `surface-card`, `rounded.md`, 16px padding, 32px avatar, `body-strong` name, `label` role/company, tags row, `button-icon` actions revealed on hover (desktop) / always visible (touch).
 - **Stepper (Email Sequences)** — vertical steps as 8px-radius cards joined by a hairline spine, step index in a 24px `surface-raised` circle, open/reply rates as compact `win-meter`s.
@@ -604,6 +662,7 @@ These are *compositions of the tokens above* for Deals Board, Forecast, Activiti
 - Use `section-label` to title every block inside sheets and dialogs.
 - Give every overlay the Radix transform-origin so it grows from its trigger.
 - Reuse the motion tokens (`--ease-ios`, `--ease-pop`, `--ease-exit`) for any new animation.
+- In charts, draw actuals solid and projections dashed; targets are always dashed `series-target` lines with an inline label.
 
 ### Don't
 - Don't introduce a second accent colour, a light theme or a light card on the dark canvas.
@@ -614,6 +673,7 @@ These are *compositions of the tokens above* for Deals Board, Forecast, Activiti
 - Don't invent new radii — pick from the scale (pill / 8 / 10–12).
 - Don't use pure `#000`/`#fff` for surfaces or text.
 - Don't animate with default `ease` — use the spring tokens, and keep exits shorter than entrances.
+- Don't use a chart library's default styling, gradients or filled chart backgrounds — charts are hand-built SVG on the bare canvas.
 
 ## Responsive Behavior
 
@@ -635,6 +695,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Table** → unchanged grid, horizontal scroll (touch swipe or mouse click-drag with inertia); footer becomes 2×2.
 - **Sheets / New Company** → bottom sheets, dismissable by dragging the header down.
 - **Topbar** → hamburger added, user pill shows avatar only.
+- **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; risk rows keep company + reason only below `sm`.
 
 ### Image Behavior
 Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data URIs; the brand mark is a 187px transparent PNG rendered at 22px via `next/image`. No responsive image sets are needed.
@@ -647,6 +708,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 | `--ease-exit` | `cubic-bezier(.32,0,.67,0)` | All exits (~50% of entrance duration) |
 - Press: `scale: .97` in 90ms; wide list rows highlight instead.
 - New rows: fade/slide in with a 20% indigo wash that settles (1.6s) and scroll into view.
+- Charts: `reveal` 1.1s (clip scaleX from the plot's left edge), `bar-grow` 700ms staggered 90ms, `live-pulse` 2.4s loop on the latest actual, tooltip `pop-in`, values/markers transition 700ms on `--ease-ios` when data changes.
 - Kanban: `lift` 240ms on pick-up, drop animation 420ms `--ease-ios`, `card-wash` 1.4s on the landed card, drag auto-scroll capped at ~400px/s so a finger at the edge moves one column at a time.
 - Swipe-to-dismiss: 1:1 tracking, 0.2× rubber-band past rest, dismiss past 30% or at > 0.5 px/ms.
 - `prefers-reduced-motion` collapses everything to 1ms.
@@ -665,6 +727,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
-- **Charts, full-page timeline, contact grid, stepper** are *derived* patterns above, not measured from a reference. The Kanban board, deal card, KPI strip and stage track were designed from this system (no external reference) and are now documented as built.
-- **Forecast, Activities, Contacts, Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
+- **Full-page timeline, contact grid, stepper** are *derived* patterns above, not measured from a reference. The Kanban board, deal card, KPI strip, stage track and all Forecast charts were designed from this system (no external reference) and are documented as built.
+- **Activities, Contacts, Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
+- Chart tooltips are pointer/touch driven; there is no keyboard scrubbing for the line chart yet.
 - Backdrop-blur strength and `linear()` spring rendering vary slightly by browser; they are not pixel tokens.

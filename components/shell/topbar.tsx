@@ -15,12 +15,13 @@ import { useTabIndicator } from "@/components/ui/use-tab-indicator";
 const TABS: { label: string; href?: string }[] = [
   { label: "Companies", href: "/companies" },
   { label: "Deals", href: "/deals" },
-  { label: "Forecast" },
+  { label: "Forecast", href: "/forecast" },
 ];
 
 const TITLES: Record<string, string> = {
   "/companies": "Companies",
   "/deals": "Deals Board",
+  "/forecast": "Forecast",
 };
 
 export function Topbar() {

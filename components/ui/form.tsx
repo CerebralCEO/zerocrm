@@ -19,6 +19,10 @@ export function Input({ className, ...props }: React.ComponentProps<"input">) {
   return <input className={cn(FIELD, className)} {...props} />;
 }
 
+export function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+  return <textarea className={cn(FIELD, "h-auto min-h-[84px] resize-none py-[9px] leading-[18px]", className)} {...props} />;
+}
+
 export function Select({
   value,
   onValueChange,

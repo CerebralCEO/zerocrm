@@ -31,7 +31,7 @@ type NavItem = { label: string; icon?: LucideIcon; badge?: string; dot?: string;
 const MAIN: NavItem[] = [
   { label: "Companies", icon: Building2, badge: "241", href: "/companies" },
   { label: "Deals Board", icon: Clipboard, href: "/deals" },
-  { label: "Forecast", icon: ChartNoAxesColumn, badge: "9" },
+  { label: "Forecast", icon: ChartNoAxesColumn, badge: "9", href: "/forecast" },
   { label: "Activities", icon: List },
   { label: "Contacts", icon: Book, badge: "38" },
   { label: "Email Sequences", icon: Mail },

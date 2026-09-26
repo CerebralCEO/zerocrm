@@ -42,6 +42,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Deal detail** — value, weighted forecast, stage track, editable stage / win probability / next step, and a recent-activity timeline.
 - **New Deal** from the toolbar or any column's `+` (the stage is preselected), sort within columns, filter by owner and close date (incl. *Overdue*), CSV export.
 
+### Forecast
+- **Live from the board** — every number is derived from the deals board, so dragging a deal to *Closed Won* moves the forecast instantly.
+- **Quota attainment chart** — cumulative closed-won to date, commit and best-case projections from *today*, the quota line, a live pulse on the latest actual and a week-by-week crosshair tooltip (mouse and touch).
+- **Forecast categories** — closed → commit → best case → pipeline against quota, plus closed + commit and pipeline coverage.
+- **Monthly bookings**, a **team attainment** leaderboard and **deals at risk** (overdue, low confidence, closing soon) that open straight into the deal sheet.
+- **Submit Forecast** — lock in your commit / best-case call with a note; it shows up as a *Your call* marker. Fiscal periods (FQ3 · Aug–Oct, FQ4 · Nov–Jan) and owner filter.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -85,6 +92,16 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
     <td width="50%"><img src="./docs/screenshots/desktop-deal-detail.png" alt="Deal detail sheet" /><p align="center"><sub><b>Deal detail</b> — stage track, win probability, activity</sub></p></td>
   </tr>
 </table>
+
+### Forecast
+
+<img src="./docs/screenshots/desktop-forecast.png" alt="Forecast — quota attainment, categories and KPIs" width="100%" />
+
+<details>
+<summary>Full forecast page</summary>
+<br />
+<img src="./docs/screenshots/desktop-forecast-full.png" alt="Forecast — monthly bookings, team attainment and deals at risk" width="100%" />
+</details>
 
 ### Mobile
 
@@ -150,13 +167,15 @@ zerocrm/
 │   ├── (crm)/
 │   │   ├── layout.tsx            # App shell: sidebar + topbar + profile sheet
 │   │   ├── companies/page.tsx    # Toolbar, table, new-company dialog
-│   │   └── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
+│   │   ├── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
+│   │   └── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
 ├── components/
 │   ├── companies/                # Table, toolbar, detail sheet, new-company dialog, ⌘K search
 │   ├── deals/                    # Kanban board, deal card, KPI strip, deal sheet, new-deal dialog
+│   ├── forecast/                 # Hand-built SVG charts, category bar, leaderboard, submit dialog
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -167,6 +186,7 @@ zerocrm/
 ├── lib/
 │   ├── data.ts                   # Types + mock companies, owners, notifications
 │   ├── deals.ts / deals-store.ts # Deal stages, mock deals and the deals store
+│   ├── forecast.ts               # Fiscal periods + forecast math (derived from deals)
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -216,7 +236,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [ ] Persistence (PostgreSQL + Drizzle) behind Server Actions
 - [ ] Authentication and team workspaces
 - [x] Deals board (Kanban) with drag & drop
-- [ ] Forecast, Activities, Contacts and Email Sequences views
+- [x] Forecast with live quota attainment
+- [ ] Activities, Contacts and Email Sequences views
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

@@ -66,6 +66,9 @@
   --animate-row-in: row-in 1600ms cubic-bezier(0.22, 1, 0.36, 1);
   --animate-card-wash: card-wash 1400ms cubic-bezier(0.22, 1, 0.36, 1);
   --animate-lift: lift 240ms var(--ease-pop) both;
+  --animate-reveal: reveal 1100ms var(--ease-ios) both;
+  --animate-bar-grow: bar-grow 700ms var(--ease-ios) both;
+  --animate-live-pulse: live-pulse 2400ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -111,6 +114,21 @@
   @keyframes check-pop {
     from { transform: scale(0.4); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+  }
+  /* Charts: series draw in left → right (applied to an SVG clip rect). */
+  @keyframes reveal {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  /* Charts: bars rise from the baseline. */
+  @keyframes bar-grow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+  /* Charts: a soft ring breathing out of the "today" point. */
+  @keyframes live-pulse {
+    0% { transform: scale(1); opacity: 0.55; }
+    70%, 100% { transform: scale(3.2); opacity: 0; }
   }
   /* Kanban: a dropped / created card glows indigo, then settles into its own fill. */
   @keyframes card-wash {

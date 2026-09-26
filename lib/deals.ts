@@ -78,6 +78,10 @@ const SEEDS: Seed[] = [
   ["d-google", "google", "SMB program pilot", 112277, "proposal", "kate", 48, "2026-10-26", "Renewal terms draft", "Renewal", "2026-09-07"],
   ["d-snow-ai", "snowflake", "AI workloads add-on", 88000, "discovery", "grace", 12, "2026-12-20", "Technical deep-dive", "Discovery", "2026-09-23"],
   ["d-stripe-won", "stripe", "Payments data connector", 64000, "won", "noah", 100, "2026-09-10", "Kickoff scheduled", "Demo", "2026-09-10"],
+  ["d-netflix-won", "netflix", "Ads measurement add-on", 78000, "won", "ricky", 100, "2026-08-12", "Onboarding complete", "Pilot", "2026-08-12"],
+  ["d-intercom-won", "intercom", "Seat top-up", 54000, "won", "lina", 100, "2026-08-21", "Usage review in Q4", "Product", "2026-08-21"],
+  ["d-spotify-won", "spotify", "Podcast analytics", 112000, "won", "hannah", 100, "2026-09-05", "Expansion discovery", "Expansion", "2026-09-05"],
+  ["d-paypal-won", "paypal", "Fraud alerts module", 96000, "won", "maria", 100, "2026-09-22", "Security onboarding", "Security", "2026-09-22"],
 ];
 
 const KINDS: DealActivity["kind"][] = ["call", "email", "meeting", "note"];
