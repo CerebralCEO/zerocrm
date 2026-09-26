@@ -15,7 +15,7 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-22c55e.svg?style=flat-square)](#-contributing)
 
-[Features](#-features) · [Screenshots](#-screenshots) · [Quick start](#-quick-start) · [Architecture](#-architecture) · [Design system](#-design-system) · [Roadmap](#-roadmap) · [Contributing](#-contributing)
+**[🔗 Live demo](https://trythezerocrm.vercel.app/)** · [Features](#-features) · [Screenshots](#-screenshots) · [Quick start](#-quick-start) · [Architecture](#-architecture) · [Design system](#-design-system) · [Roadmap](#-roadmap) · [Contributing](#-contributing)
 
 <br />
 
@@ -81,13 +81,15 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 **Requirements:** Node.js **20.9+** and [pnpm](https://pnpm.io) 9 (npm / yarn / bun work too).
 
 ```bash
-git clone https://github.com/ZeroFounder/zerocrm.git
+git clone https://github.com/CerebralCEO/zerocrm.git
 cd zerocrm
 pnpm install
 pnpm dev
 ```
 
 Open **http://localhost:3000** — you'll be redirected to `/companies`.
+
+Or try it right now at **[trythezerocrm.vercel.app](https://trythezerocrm.vercel.app/)**.
 
 | Script | What it does |
 | --- | --- |
@@ -100,7 +102,7 @@ Open **http://localhost:3000** — you'll be redirected to `/companies`.
 
 ### Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ZeroFounder/zerocrm)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/CerebralCEO/zerocrm)
 
 Or build it anywhere that runs Node: `pnpm build && pnpm start`. Every route is statically prerendered.
 
@@ -197,7 +199,7 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [ ] Light theme
 - [ ] Unit and end-to-end tests (Vitest + Playwright)
 
-Have an idea? [Open an issue](https://github.com/ZeroFounder/zerocrm/issues) — feedback is very welcome.
+Have an idea? [Open an issue](https://github.com/CerebralCEO/zerocrm/issues) — feedback is very welcome.
 
 ---
 
