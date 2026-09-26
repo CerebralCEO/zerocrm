@@ -34,7 +34,7 @@ const MAIN: NavItem[] = [
   { label: "Forecast", icon: ChartNoAxesColumn, badge: "9", href: "/forecast" },
   { label: "Activities", icon: List, href: "/activities" },
   { label: "Contacts", icon: Book, badge: "38", href: "/contacts" },
-  { label: "Email Sequences", icon: Mail },
+  { label: "Email Sequences", icon: Mail, href: "/sequences" },
 ];
 
 const SECTIONS: { title: string; items: NavItem[] }[] = [

@@ -63,6 +63,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **iOS Contacts touches on phones** — sticky A–Z sections and a draggable alphabet index with a letter bubble.
 - **Contact sheet** with Email · Call · Log · Company action tiles, contact details, account-touch sparkline, open deals and recent activity. *Log* opens the activity dialog prefilled with the account.
 
+### Email Sequences
+- **Master / detail** — every sequence with status, steps, enrolled, open and reply rates; an iOS-style **switch** to run or pause.
+- **Visual stepper** — email, call, task and social steps on a timeline with *Wait n days* gaps and per-step open / reply rates.
+- **Step editor** — segmented step type, a delay stepper, one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` variables inserted at the cursor, and a live preview rendered for a real enrolled contact.
+- **Enrollments** — see who is on which step (active, replied, bounced, finished) and enroll more contacts with search + multi-select.
+- **New Sequence** from Blank, Outbound or Renewal templates (saved as a draft). On phones the detail pushes in like an iOS screen.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -127,6 +134,15 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   <tr>
     <td width="50%"><img src="./docs/screenshots/desktop-contacts.png" alt="Contacts — card grid" /><p align="center"><sub><b>Contacts</b> — buying roles, relationship strength, going cold</sub></p></td>
     <td width="50%"><img src="./docs/screenshots/desktop-contact-sheet.png" alt="Contact sheet" /><p align="center"><sub><b>Contact sheet</b> — action tiles, details, deals, activity</sub></p></td>
+  </tr>
+</table>
+
+### Email Sequences
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-sequences.png" alt="Email Sequences — stepper and enrollments" /><p align="center"><sub><b>Sequences</b> — stepper, rates, enrollments</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-step-editor.png" alt="Step editor with live preview" /><p align="center"><sub><b>Step editor</b> — variables and live preview</sub></p></td>
   </tr>
 </table>
 
@@ -197,7 +213,8 @@ zerocrm/
 │   │   ├── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
 │   │   ├── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
 │   │   ├── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
-│   │   └── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
+│   │   ├── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
+│   │   └── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -207,6 +224,7 @@ zerocrm/
 │   ├── forecast/                 # Hand-built SVG charts, category bar, leaderboard, submit dialog
 │   ├── activities/               # Feed, swipeable agenda, heatmap, log-activity dialog
 │   ├── contacts/                 # Contact card, grid + A–Z index, list view, contact sheet
+│   ├── sequences/                # Sequence list/detail, step cards, step editor, enroll dialog
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -220,6 +238,7 @@ zerocrm/
 │   ├── forecast.ts               # Fiscal periods + forecast math (derived from deals)
 │   ├── activities.ts             # Activity types, seeded history, agenda, time helpers
 │   ├── contacts.ts               # Contacts, buying roles (fictional, reserved emails/phones)
+│   ├── sequences.ts              # Sequences, steps, enrollments, template rendering
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -272,7 +291,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Forecast with live quota attainment
 - [x] Activities with agenda, feed and heatmap
 - [x] Contacts with cards, list view and A–Z index
-- [ ] Email Sequences view
+- [x] Email Sequences with stepper, step editor and enrollments
+- [ ] Team, reporting and pipeline views from the sidebar
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

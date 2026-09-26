@@ -24,6 +24,7 @@ const TITLES: Record<string, string> = {
   "/forecast": "Forecast",
   "/activities": "Activities",
   "/contacts": "Contacts",
+  "/sequences": "Email Sequences",
 };
 
 export function Topbar() {

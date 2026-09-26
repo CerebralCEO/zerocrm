@@ -526,6 +526,27 @@ components:
   toggle-tag:
     look: "a regular tag; unselected at 45% opacity (75% on hover), selected 100%"
     use: "multi-select of categories inside forms (e.g. buying roles)"
+  switch:
+    size: "40 × 24px track, 20px white thumb"
+    off: "#2a2a2a + 1px {colors.border-control}"
+    on: "{colors.live}"
+    motion: "thumb springs 16px on --ease-pop (420ms); track colour 300ms"
+    use: "binary on/off state of a running thing (e.g. sequence Running / Paused)"
+  sequence-row:
+    padding: "14px 16px, hairline below"
+    content: "name {typography.body-strong} over status-pill + 'n steps · n enrolled' {typography.label}; right: reply % over open % + owner avatar"
+    selected: "{colors.row-selected} + 2px {colors.ink} bar on the left edge (desktop master/detail)"
+  step-card:
+    layout: "24px index circle on a 1px {colors.hairline} spine (40px left gutter); optional 'Wait n days' pill (20px, 11px text, clock) above the card"
+    card: "{colors.surface-card}, 1px {colors.border-card}, {rounded.md}, 12px padding"
+    content: "24px step icon + kind {typography.control} + 'Day n' + sent count · subject {typography.body-strong} · 2-line body preview {typography.label} · hairline · Open (spark) / Reply (amber) rate bars (4px × 40px)"
+    variables: "{{variable}} rendered as a 4px-radius chip at 7% white"
+  delay-stepper:
+    size: "36px tall, − / value / + with hairline dividers"
+    look: "input shell ({colors.surface-input}, 1px {colors.border-input}, {rounded.md})"
+  enrollment-row:
+    height: "52px min"
+    content: "28px avatar · name over role · company · one 10×6px segment per step (done green, current amber, pending empty) · 'Step n/m' · state tag (active blue, replied land, bounced red, finished neutral)"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -714,6 +735,8 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Activities page** — KPI strip (counts, `currency={false}`), then the `feed-item` timeline grouped under sticky `day-header`s with "Show older activity" paging (6 days per page); the right column holds *Today's agenda* (`agenda-row`s with a win-meter of completion) and *Team activity* (`heatmap` + a by-type list with 6px `{colors.spark}` share bars). Company names and deal chips open their sheets; logging an activity inserts it into the feed and the deal sheet's timeline.
 - **`segmented-control`** — the activity-type picker in *Log Activity*; use it for any 2–5 option exclusive choice inside forms. `iconOnly` keeps labels for screen readers (Contacts grid/list switch).
 - **Contacts page** — KPI strip, then a `contact-card` grid (continuous from `md`; on phones grouped under sticky letter/company headers with the `alphabet-index`) or a dense list view (desktop/tablet, horizontal scroll + mouse pan). Persona tags use the tag palette: Champion `tag-land`, Decision maker `tag-blue`, Economic buyer `tag-purple`, Influencer `tag-teal`, Technical `tag-yellow`, Blocker `tag-red`. Relationship strength reuses the `win-meter`; >21 days without a touch reads "Going cold" in `{colors.alert}`.
+- **Email Sequences page** — KPI strip (with `%` suffix values), then a master/detail split: `sequence-row` list (380px) and the detail (title + status pill + goal + `switch`, four stat tiles, `step-card` stepper with *Add step*, and the enrolled list with *Enroll contacts*). Below `lg` it becomes iOS navigation: the list is the root screen and the detail pushes in from the right (`sheet-in`) with a "‹ Sequences" back bar.
+- **Step editor sheet** — `segmented-control` for the step type, `delay-stepper`, subject + message with one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` chips that insert at the cursor, and a live preview rendered for the first enrolled contact. Delete lives bottom-left in `{colors.alert}`.
 - **Contact sheet** — header (52px avatar, name, role · company, star), persona tags, four `action-tile`s, `info-row`s, relationship (28px score, account-touch sparkline, 64-segment meter), open deals and recent activity. *Log Activity* opens the log dialog prefilled with the contact's company.
 - **Activity timeline (deal sheet)** — 28px `surface-raised` icon tiles on a 1px `{colors.hairline-overlay}` spine, `body-copy` text, `label` time.
 
@@ -724,7 +747,6 @@ The table footer is the only footer: 39px, four equal cells separated by hairlin
 These are *compositions of the tokens above* for Deals Board, Forecast, Activities, Contacts and Email Sequences. Build from them; promote each to a real component entry once implemented.
 - **KPI deltas** — when a metric needs a trend, append it to the `kpi-strip` meta line in `label`, coloured `{colors.meter-green}` (up) / `{colors.meter-red}` (down).
 - **New charts** — follow `line-chart` / `bar-chart`: hairline gridlines, `label` axes, series colours only from the `series-*` tokens (actual → closed, committed → commit, upside → best, remainder → pipeline, goals → target), no chart backgrounds, no boxed legends. Past = solid, future = dashed.
-- **Stepper (Email Sequences)** — vertical steps as 8px-radius cards joined by a hairline spine, step index in a 24px `surface-raised` circle, open/reply rates as compact `win-meter`s.
 - **Empty state** — centered 13px `{colors.muted}` sentence inside the region; no illustrations.
 
 ## Do's and Don'ts
@@ -770,6 +792,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Toolbar** → *Filters* popover + Export + New Company on one 62px row.
 - **Table** → unchanged grid, horizontal scroll (touch swipe or mouse click-drag with inertia); footer becomes 2×2.
 - **Kanban** → one column per screen (86vw, snap) with `stage-tabs` above; KPI strip 2×2.
+- **Email Sequences** → master/detail becomes a pushed detail screen below `lg`; detail stat tiles 2×2 below `sm`; steps and enrolled stack into one column below `xl`; enrollment step segments hide below `sm`.
 - **Contacts** → one card per row on phones with sticky section headers and the A–Z index; the list view is replaced by cards below `md`; the view switch hides on phones.
 - **Activities** → single column below `lg` with the agenda + heatmap *first* (what matters today), then the feed; agenda owner avatars hide below `sm`; segmented-control icons hide on phones.
 - **Rule:** every horizontally scrolling region must also be operable with a mouse in a narrow window (tabs, click-drag pan or header wheel) — never rely on touch swipes alone.
@@ -808,8 +831,9 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
-- **Stepper** is a *derived* pattern above, not measured from a reference. The Kanban board, deal card, KPI strip, stage track, Forecast charts, the Activities feed / agenda / heatmap and the Contacts cards / sheet were designed from this system (no external reference) and are documented as built.
-- **Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
+- Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
+- The team (Strategic AEs, Mid Market, SDR Team), reporting (Q1 Forecast, Slipping Deals) and pipeline sidebar destinations have no pages yet (they show "Coming soon").
+- Sequences don't actually send email; step stats are demo data.
 - Demo contacts are fictional and use reserved `.example` emails and 555-01xx phone numbers.
 - Timestamps are timezone-free local strings in the demo data; a real backend must supply the viewer's timezone.
 - Chart tooltips are pointer/touch driven; there is no keyboard scrubbing for the line chart yet.
