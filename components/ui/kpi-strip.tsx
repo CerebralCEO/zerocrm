@@ -8,12 +8,15 @@ export function KpiCell({
   value,
   meta,
   aside,
+  currency = true,
 }: {
   icon: LucideIcon;
   label: string;
   value: number;
   meta: React.ReactNode;
   aside?: React.ReactNode;
+  /** Prefix a muted "$" (money) or show a plain count. */
+  currency?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-[9px] border-line px-4 py-3 sm:gap-[10px] sm:py-[14px]">
@@ -23,7 +26,7 @@ export function KpiCell({
       </span>
       <div className="flex items-center justify-between gap-3">
         <span className="truncate text-[20px] font-medium leading-none tracking-[-0.5px] text-fg tabular-nums sm:text-[24px]">
-          <span className="mr-[3px] text-[#7f7f7f]">$</span>
+          {currency && <span className="mr-[3px] text-[#7f7f7f]">$</span>}
           {formatNumber(value)}
         </span>
         {aside}

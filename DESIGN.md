@@ -58,6 +58,12 @@ colors:
   series-best: "rgba(253,230,138,0.5)"            # best-case upside (dashed, lighter amber)
   series-pipeline: "{colors.meter-empty}"         # early-stage remainder
   series-target: "{colors.primary-border}"        # quota / target lines — dashed, never filled
+  # Activity heatmap levels (0 → 4)
+  heat-0: "rgba(255,255,255,0.05)"
+  heat-1: "rgb(0 181 98 / 0.28)"
+  heat-2: "rgb(0 181 98 / 0.5)"
+  heat-3: "rgb(0 181 98 / 0.75)"
+  heat-4: "{colors.spark}"
   # Tag system — opaque tinted pills: {bg, border, text}
   tag-pilot: { bg: "#3e291d", border: "#764d35", text: "#eeb390" }
   tag-blue: { bg: "#1d2b3e", border: "#23354c", text: "#bfdbfe" }
@@ -461,6 +467,35 @@ components:
     item: "{typography.control}, active {colors.ink} 500 / inactive {colors.muted}, 20px apart, count-badge (11px)"
     indicator: "1px {colors.ink} underline gliding on --ease-ios (500ms)"
     behaviour: "tap → smooth-scroll to column; board scroll → active tab follows"
+  segmented-control:
+    height: 34px
+    track: "{colors.surface-control}, 1px {colors.border-control}, {rounded.pill}, 3px padding"
+    thumb: "{colors.surface-raised} + 1px rgba(255,255,255,0.13) + 0 1px 2px rgba(0,0,0,.4) — glides on --ease-ios (500ms)"
+    item: "{typography.control}, active {colors.ink} / inactive {colors.muted}, optional 13px icon (hidden on phones)"
+  activity-icon:
+    sizes: "24px (rows, rounded.sm) · 28px (deal sheet) · 32px (feed)"
+    backgroundColor: "{colors.surface-raised}"
+    border: "1px {colors.border-card}"
+    icon: "42% of tile, {colors.body}, stroke 1.75 — Phone / Mail / Video / FileText / CircleCheck"
+  feed-item:
+    layout: "32px activity-icon on a 1px {colors.hairline} spine · sentence in {typography.body-copy} with bold actor and linked company · time {typography.label} right-aligned"
+    body: "{typography.label} at 80% {colors.body}; notes use the quote block ({colors.surface-raised}, 1px #3a3a3a, {rounded.md})"
+    dealChip: "22px pill, {colors.surface-card} fill, 1px {colors.border-card}, 14px logo + deal title in {typography.label}"
+    gap: "20px between items"
+  day-header:
+    typography: "{typography.section-label} + '· n' count in {colors.muted}"
+    behaviour: "sticky to the top of the scroll area on a 90% canvas + 6px blur (iOS list headers)"
+  agenda-row:
+    height: "52px min"
+    content: "checkbox · time (58px, {typography.label}; overdue → date in {colors.alert}) · 24px activity-icon · title {typography.body-strong} over company {typography.label} · 20px avatar"
+    done: "title → {colors.muted} + line-through"
+    swipeAction: "touch only: row tracks the finger left, revealing a green tinted action (Done / Undo); commits past 88px, rubber-bands past 132px, springs back 420ms --ease-ios"
+  heatmap:
+    grid: "12 weeks × 7 days, Monday-first, 4px gaps, square cells {rounded: 3px}"
+    levels: "heat-0 … heat-4 at 0 / 1–2 / 3–4 / 5–7 / 8+ per day"
+    labels: "months above first week of each month, Mon/Wed/Fri at left, 11px {colors.muted}"
+    readout: "one line above the grid names the hovered / tapped / busiest day — no floating tooltip"
+    legend: "Less ■■■■■ More, 10px swatches, right-aligned"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -646,6 +681,8 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **`stacked-bar`** — forecast categories (closed → commit → best → pipeline) with a Quota marker above and a *Your call* marker below, followed by one 43px row per category (dot, name, "n deals · hint", value, % of quota) and two `stat-tile`s (Closed + commit, Pipeline coverage coloured ≥2× green / ≥1× amber / <1× alert).
 - **`bar-chart`** — monthly stacked bookings vs. a dashed target; bars rise with `bar-grow`, staggered 90ms.
 - **`leaderboard-row`** / **`risk-row`** — list rows on hairlines; risk rows open the deal sheet.
+- **Activities page** — KPI strip (counts, `currency={false}`), then the `feed-item` timeline grouped under sticky `day-header`s with "Show older activity" paging (6 days per page); the right column holds *Today's agenda* (`agenda-row`s with a win-meter of completion) and *Team activity* (`heatmap` + a by-type list with 6px `{colors.spark}` share bars). Company names and deal chips open their sheets; logging an activity inserts it into the feed and the deal sheet's timeline.
+- **`segmented-control`** — the activity-type picker in *Log Activity*; use it for any 2–5 option exclusive choice inside forms.
 - **Activity timeline (deal sheet)** — 28px `surface-raised` icon tiles on a 1px `{colors.hairline-overlay}` spine, `body-copy` text, `label` time.
 
 ### Footer
@@ -655,7 +692,6 @@ The table footer is the only footer: 39px, four equal cells separated by hairlin
 These are *compositions of the tokens above* for Deals Board, Forecast, Activities, Contacts and Email Sequences. Build from them; promote each to a real component entry once implemented.
 - **KPI deltas** — when a metric needs a trend, append it to the `kpi-strip` meta line in `label`, coloured `{colors.meter-green}` (up) / `{colors.meter-red}` (down).
 - **New charts** — follow `line-chart` / `bar-chart`: hairline gridlines, `label` axes, series colours only from the `series-*` tokens (actual → closed, committed → commit, upside → best, remainder → pipeline, goals → target), no chart backgrounds, no boxed legends. Past = solid, future = dashed.
-- **Timeline (Activities page)** — scale up the deal-sheet activity timeline: day group headers as `section-label`, 32px icon tiles on a 1px `{colors.hairline}` spine, `body-copy` text with bold actor, `label` meta.
 - **Contact card (grid view)** — `surface-card`, `rounded.md`, 16px padding, 32px avatar, `body-strong` name, `label` role/company, tags row, `button-icon` actions revealed on hover (desktop) / always visible (touch).
 - **Stepper (Email Sequences)** — vertical steps as 8px-radius cards joined by a hairline spine, step index in a 24px `surface-raised` circle, open/reply rates as compact `win-meter`s.
 - **Empty state** — centered 13px `{colors.muted}` sentence inside the region; no illustrations.
@@ -703,6 +739,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Toolbar** → *Filters* popover + Export + New Company on one 62px row.
 - **Table** → unchanged grid, horizontal scroll (touch swipe or mouse click-drag with inertia); footer becomes 2×2.
 - **Kanban** → one column per screen (86vw, snap) with `stage-tabs` above; KPI strip 2×2.
+- **Activities** → single column below `lg` with the agenda + heatmap *first* (what matters today), then the feed; agenda owner avatars hide below `sm`; segmented-control icons hide on phones.
 - **Rule:** every horizontally scrolling region must also be operable with a mouse in a narrow window (tabs, click-drag pan or header wheel) — never rely on touch swipes alone.
 - **Sheets / New Company** → bottom sheets, dismissable by dragging the header down.
 - **Topbar** → hamburger added, user pill shows avatar only.
@@ -720,6 +757,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - Press: `scale: .97` in 90ms; wide list rows highlight instead.
 - New rows: fade/slide in with a 20% indigo wash that settles (1.6s) and scroll into view.
 - Charts: `reveal` 1.1s (clip scaleX from the plot's left edge), `bar-grow` 700ms staggered 90ms, `live-pulse` 2.4s loop on the latest actual, tooltip `pop-in`, values/markers transition 700ms on `--ease-ios` when data changes.
+- Activities: heatmap cells `fade-in` staggered 35ms per week column; agenda swipe tracks 1:1 and springs back 420ms `--ease-ios`; completing an item cross-fades the title to muted + strike-through (300ms).
 - Kanban: `lift` 240ms on pick-up, drop animation 420ms `--ease-ios`, `card-wash` 1.4s on the landed card, drag auto-scroll capped at ~400px/s so a finger at the edge moves one column at a time.
 - Swipe-to-dismiss: 1:1 tracking, 0.2× rubber-band past rest, dismiss past 30% or at > 0.5 px/ms.
 - `prefers-reduced-motion` collapses everything to 1ms.
@@ -738,7 +776,8 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
-- **Full-page timeline, contact grid, stepper** are *derived* patterns above, not measured from a reference. The Kanban board, deal card, KPI strip, stage track and all Forecast charts were designed from this system (no external reference) and are documented as built.
-- **Activities, Contacts, Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
+- **Contact grid, stepper** are *derived* patterns above, not measured from a reference. The Kanban board, deal card, KPI strip, stage track, Forecast charts and the Activities feed / agenda / heatmap were designed from this system (no external reference) and are documented as built.
+- **Contacts, Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
+- Timestamps are timezone-free local strings in the demo data; a real backend must supply the viewer's timezone.
 - Chart tooltips are pointer/touch driven; there is no keyboard scrubbing for the line chart yet.
 - Backdrop-blur strength and `linear()` spring rendering vary slightly by browser; they are not pixel tokens.

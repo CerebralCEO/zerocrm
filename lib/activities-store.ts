@@ -1,0 +1,42 @@
+"use client";
+
+import { create } from "zustand";
+import { ACTIVITIES, type Activity, type ActivityKind } from "./activities";
+
+export type ActivityRange = 7 | 30 | 90;
+
+type ActivitiesState = {
+  activities: Activity[];
+  kindFilter: ActivityKind | null;
+  ownerFilter: string | null;
+  range: ActivityRange;
+  logOpen: boolean;
+  lastAddedId: string | null;
+
+  setKindFilter: (k: ActivityKind | null) => void;
+  setOwnerFilter: (id: string | null) => void;
+  setRange: (r: ActivityRange) => void;
+  setLogOpen: (open: boolean) => void;
+  toggleDone: (id: string) => void;
+  addActivity: (a: Omit<Activity, "id">) => void;
+};
+
+export const useActivities = create<ActivitiesState>((set) => ({
+  activities: ACTIVITIES,
+  kindFilter: null,
+  ownerFilter: null,
+  range: 30,
+  logOpen: false,
+  lastAddedId: null,
+
+  setKindFilter: (kindFilter) => set({ kindFilter }),
+  setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
+  setRange: (range) => set({ range }),
+  setLogOpen: (logOpen) => set({ logOpen }),
+  toggleDone: (id) => set((s) => ({ activities: s.activities.map((a) => (a.id === id ? { ...a, done: !a.done } : a)) })),
+  addActivity: (a) =>
+    set((s) => {
+      const id = `a-new-${s.activities.length}-${a.at}`;
+      return { activities: [...s.activities, { ...a, id }], lastAddedId: id };
+    }),
+}));

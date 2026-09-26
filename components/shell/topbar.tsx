@@ -22,16 +22,18 @@ const TITLES: Record<string, string> = {
   "/companies": "Companies",
   "/deals": "Deals Board",
   "/forecast": "Forecast",
+  "/activities": "Activities",
 };
 
 export function Topbar() {
   const pathname = usePathname();
-  const tab = TABS.find((t) => t.href && pathname.startsWith(t.href))?.label ?? "Companies";
+  // Sections outside the tab set (e.g. Activities) leave every tab inactive.
+  const tab = TABS.find((t) => t.href && pathname.startsWith(t.href))?.label ?? null;
   const title = TITLES[pathname] ?? "Companies";
   const setSearchOpen = useCrm((s) => s.setSearchOpen);
   const setProfileOpen = useCrm((s) => s.setProfileOpen);
   const setNavOpen = useCrm((s) => s.setNavOpen);
-  const { ref: tabsRef, style: underline } = useTabIndicator(tab, 2);
+  const { ref: tabsRef, style: underline } = useTabIndicator(tab ?? "none", 2);
 
   // ⌘K / Ctrl+K opens the command search
   useEffect(() => {
@@ -109,7 +111,7 @@ export function Topbar() {
             </button>
           );
         })}
-        {underline && (
+        {tab && underline && (
           <span
             aria-hidden
             className="absolute -bottom-px h-px bg-fg transition-[left,width] duration-500 ease-(--ease-ios)"

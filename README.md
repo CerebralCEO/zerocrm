@@ -49,6 +49,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Monthly bookings**, a **team attainment** leaderboard and **deals at risk** (overdue, low confidence, closing soon) that open straight into the deal sheet.
 - **Submit Forecast** — lock in your commit / best-case call with a note; it shows up as a *Your call* marker. Fiscal periods (FQ3 · Aug–Oct, FQ4 · Nov–Jan) and owner filter.
 
+### Activities
+- **Today's agenda** — calls, meetings and tasks for today plus anything overdue; tick them off (or **swipe left** on a phone, iOS-style) and watch the completion meter fill.
+- **Activity feed** — every call, email, meeting, note and task grouped by day under sticky headers, linked to its company and deal.
+- **Team activity heatmap** — 12 weeks of activity in a contribution grid, with a by-type breakdown.
+- **Log Activity** with an iOS-style segmented control: log what just happened (it lands in the feed *and* the deal's timeline) or schedule it for later (it lands in the agenda).
+- Filter by type, owner and range; CSV export.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -102,6 +109,10 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 <br />
 <img src="./docs/screenshots/desktop-forecast-full.png" alt="Forecast — monthly bookings, team attainment and deals at risk" width="100%" />
 </details>
+
+### Activities
+
+<img src="./docs/screenshots/desktop-activities.png" alt="Activities — feed, today's agenda and team heatmap" width="100%" />
 
 ### Mobile
 
@@ -168,7 +179,8 @@ zerocrm/
 │   │   ├── layout.tsx            # App shell: sidebar + topbar + profile sheet
 │   │   ├── companies/page.tsx    # Toolbar, table, new-company dialog
 │   │   ├── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
-│   │   └── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
+│   │   ├── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
+│   │   └── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -176,6 +188,7 @@ zerocrm/
 │   ├── companies/                # Table, toolbar, detail sheet, new-company dialog, ⌘K search
 │   ├── deals/                    # Kanban board, deal card, KPI strip, deal sheet, new-deal dialog
 │   ├── forecast/                 # Hand-built SVG charts, category bar, leaderboard, submit dialog
+│   ├── activities/               # Feed, swipeable agenda, heatmap, log-activity dialog
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -187,6 +200,7 @@ zerocrm/
 │   ├── data.ts                   # Types + mock companies, owners, notifications
 │   ├── deals.ts / deals-store.ts # Deal stages, mock deals and the deals store
 │   ├── forecast.ts               # Fiscal periods + forecast math (derived from deals)
+│   ├── activities.ts             # Activity types, seeded history, agenda, time helpers
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -237,7 +251,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [ ] Authentication and team workspaces
 - [x] Deals board (Kanban) with drag & drop
 - [x] Forecast with live quota attainment
-- [ ] Activities, Contacts and Email Sequences views
+- [x] Activities with agenda, feed and heatmap
+- [ ] Contacts and Email Sequences views
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

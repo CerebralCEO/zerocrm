@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, CalendarClock, FileText, Handshake, Mail, Phone, Video, type LucideIcon } from "lucide-react";
+import { Calendar, CalendarClock, CircleCheck, FileText, Handshake, Mail, Phone, Video, type LucideIcon } from "lucide-react";
+import { useActivities } from "@/lib/activities-store";
+import { dateOf, dayLabel, formatTime } from "@/lib/activities";
 import { useCrm } from "@/lib/store";
 import { useDeals, isOverdue } from "@/lib/deals-store";
 import { STAGES, stageById, type Deal, type DealActivity, type StageId } from "@/lib/deals";
@@ -14,7 +16,8 @@ import { Tag } from "@/components/primitives/tag";
 import { Avatar } from "@/components/primitives/avatar";
 import { SegmentedMeter } from "@/components/primitives/meter";
 
-const ACTIVITY_ICON: Record<DealActivity["kind"], LucideIcon> = {
+const ACTIVITY_ICON: Record<DealActivity["kind"] | "task", LucideIcon> = {
+  task: CircleCheck,
   call: Phone,
   email: Mail,
   meeting: Video,
@@ -63,6 +66,14 @@ type Draft = Pick<Deal, "stage" | "probability" | "nextStep">;
 
 function DealBody({ deal, draft, setDraft }: { deal: Deal; draft: Draft; setDraft: (d: Draft) => void }) {
   const company = useCrm((s) => s.companies.find((c) => c.id === deal.companyId));
+  const allActivities = useActivities((s) => s.activities);
+  // Logged activity for this deal (from the Activities page), newest first; seed notes as fallback.
+  const logged = allActivities
+    .filter((a) => a.dealId === deal.id && a.done)
+    .sort((a, b) => b.at.localeCompare(a.at))
+    .slice(0, 4)
+    .map((a) => ({ kind: a.kind, text: a.body ? `${a.title} — ${a.body}` : a.title, time: `${dayLabel(dateOf(a.at))} · ${formatTime(a.at)}` }));
+  const timeline = logged.length ? logged : deal.activity;
   const owner = ownerById(deal.ownerId);
   const weighted = Math.round((deal.value * draft.probability) / 100);
   const overdue = isOverdue({ ...deal, stage: draft.stage });
@@ -154,7 +165,7 @@ function DealBody({ deal, draft, setDraft }: { deal: Deal; draft: Draft; setDraf
       <Section className="border-b-0">
         <SectionLabel>Recent Activity</SectionLabel>
         <ol className="relative mt-[16px] flex flex-col gap-4 before:absolute before:top-2 before:bottom-2 before:left-[13.5px] before:w-px before:bg-line-strong">
-          {deal.activity.map((a, i) => {
+          {timeline.map((a, i) => {
             const Icon = ACTIVITY_ICON[a.kind];
             return (
               <li key={i} className="relative flex items-start gap-3">
