@@ -23,6 +23,7 @@ const TITLES: Record<string, string> = {
   "/deals": "Deals Board",
   "/forecast": "Forecast",
   "/activities": "Activities",
+  "/contacts": "Contacts",
 };
 
 export function Topbar() {

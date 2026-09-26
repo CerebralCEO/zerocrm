@@ -56,6 +56,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Log Activity** with an iOS-style segmented control: log what just happened (it lands in the feed *and* the deal's timeline) or schedule it for later (it lands in the agenda).
 - Filter by type, owner and range; CSV export.
 
+### Contacts
+- **Card grid or dense list** (toggle), with instant search, sort (name, relationship, last touch, company) and filters for buying role, owner, starred and *going cold*.
+- **Buying roles** — Champion, Decision maker, Economic buyer, Influencer, Technical, Blocker — as colour-coded tags.
+- **Relationship strength** on the win-meter, with a red *Going cold* warning after 21 days without a touch.
+- **iOS Contacts touches on phones** — sticky A–Z sections and a draggable alphabet index with a letter bubble.
+- **Contact sheet** with Email · Call · Log · Company action tiles, contact details, account-touch sparkline, open deals and recent activity. *Log* opens the activity dialog prefilled with the account.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -113,6 +120,15 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 ### Activities
 
 <img src="./docs/screenshots/desktop-activities.png" alt="Activities — feed, today's agenda and team heatmap" width="100%" />
+
+### Contacts
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-contacts.png" alt="Contacts — card grid" /><p align="center"><sub><b>Contacts</b> — buying roles, relationship strength, going cold</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-contact-sheet.png" alt="Contact sheet" /><p align="center"><sub><b>Contact sheet</b> — action tiles, details, deals, activity</sub></p></td>
+  </tr>
+</table>
 
 ### Mobile
 
@@ -180,7 +196,8 @@ zerocrm/
 │   │   ├── companies/page.tsx    # Toolbar, table, new-company dialog
 │   │   ├── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
 │   │   ├── forecast/page.tsx     # Attainment chart, categories, monthly, team, risk
-│   │   └── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
+│   │   ├── activities/page.tsx   # Agenda, activity feed, heatmap, log-activity dialog
+│   │   └── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -189,6 +206,7 @@ zerocrm/
 │   ├── deals/                    # Kanban board, deal card, KPI strip, deal sheet, new-deal dialog
 │   ├── forecast/                 # Hand-built SVG charts, category bar, leaderboard, submit dialog
 │   ├── activities/               # Feed, swipeable agenda, heatmap, log-activity dialog
+│   ├── contacts/                 # Contact card, grid + A–Z index, list view, contact sheet
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -201,6 +219,7 @@ zerocrm/
 │   ├── deals.ts / deals-store.ts # Deal stages, mock deals and the deals store
 │   ├── forecast.ts               # Fiscal periods + forecast math (derived from deals)
 │   ├── activities.ts             # Activity types, seeded history, agenda, time helpers
+│   ├── contacts.ts               # Contacts, buying roles (fictional, reserved emails/phones)
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -252,7 +271,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Deals board (Kanban) with drag & drop
 - [x] Forecast with live quota attainment
 - [x] Activities with agenda, feed and heatmap
-- [ ] Contacts and Email Sequences views
+- [x] Contacts with cards, list view and A–Z index
+- [ ] Email Sequences view
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

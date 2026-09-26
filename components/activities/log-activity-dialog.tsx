@@ -27,12 +27,15 @@ function LogForm({ onDone }: { onDone: () => void }) {
   const companies = useCrm((s) => s.companies);
   const deals = useDeals((s) => s.deals);
   const addActivity = useActivities((s) => s.addActivity);
+  const defaults = useActivities((s) => s.logDefaults);
   const [kind, setKind] = useState<ActivityKind>("call");
-  const [companyId, setCompanyId] = useState(companies[0]?.id ?? "");
+  const [companyId, setCompanyId] = useState(defaults?.companyId ?? companies[0]?.id ?? "");
   const companyDeals = deals.filter((d) => d.companyId === companyId);
   const [dealId, setDealId] = useState<string>(companyDeals[0]?.id ?? "none");
-  const [ownerId, setOwnerId] = useState(companies[0]?.ownerId ?? OWNERS[0].id);
-  const [title, setTitle] = useState("");
+  const [ownerId, setOwnerId] = useState(
+    companies.find((c) => c.id === companyId)?.ownerId ?? companies[0]?.ownerId ?? OWNERS[0].id,
+  );
+  const [title, setTitle] = useState(defaults?.title ?? "");
   const [body, setBody] = useState("");
   const [date, setDate] = useState(TODAY);
   const [time, setTime] = useState(NOW_TIME);

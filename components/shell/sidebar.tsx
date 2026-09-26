@@ -33,7 +33,7 @@ const MAIN: NavItem[] = [
   { label: "Deals Board", icon: Clipboard, href: "/deals" },
   { label: "Forecast", icon: ChartNoAxesColumn, badge: "9", href: "/forecast" },
   { label: "Activities", icon: List, href: "/activities" },
-  { label: "Contacts", icon: Book, badge: "38" },
+  { label: "Contacts", icon: Book, badge: "38", href: "/contacts" },
   { label: "Email Sequences", icon: Mail },
 ];
 

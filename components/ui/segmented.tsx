@@ -12,12 +12,15 @@ export function Segmented<T extends string>({
   onChange,
   options,
   label,
+  iconOnly,
   className,
 }: {
   value: T;
   onChange: (v: T) => void;
   options: { value: T; label: string; icon?: React.ReactNode }[];
   label: string;
+  /** Show icons only; labels stay available to screen readers. */
+  iconOnly?: boolean;
   className?: string;
 }) {
   const { ref, style } = useTabIndicator(value);
@@ -57,7 +60,7 @@ export function Segmented<T extends string>({
             )}
           >
             {o.icon}
-            <span className="truncate">{o.label}</span>
+            <span className={iconOnly ? "sr-only" : "truncate"}>{o.label}</span>
           </button>
         );
       })}
