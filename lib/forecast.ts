@@ -5,7 +5,7 @@ import { TODAY } from "./deals-store";
  * Fiscal calendar: the fiscal year starts Feb 1, so FQ3 = Aug–Oct and
  * FQ4 = Nov–Jan (a common SaaS convention).
  */
-export type PeriodId = "fq3" | "fq4";
+export type PeriodId = "fq3" | "fq4" | "fq1";
 
 export type Period = {
   id: PeriodId;
@@ -22,6 +22,29 @@ export const PERIODS: Period[] = [
   { id: "fq4", label: "FQ4 FY27", range: "Nov – Jan", start: "2026-11-01", end: "2027-01-31", quota: 3_000_000, repQuota: 500_000 },
 ];
 export const periodById = (id: PeriodId) => PERIODS.find((p) => p.id === id)!;
+
+/** Next fiscal year's first quarter — planned on the Q1 Forecast report, not in the period switch. */
+export const Q1_FY28: Period = {
+  id: "fq1",
+  label: "FQ1 FY28",
+  range: "Feb – Apr",
+  start: "2027-02-01",
+  end: "2027-04-30",
+  quota: 3_400_000,
+  repQuota: 450_000,
+};
+
+/** Fiscal quarter of a date ("FQ3 FY27"); the fiscal year starts Feb 1. */
+export function fiscalQuarter(iso: string) {
+  const [y, m] = iso.split("-").map(Number);
+  const q = Math.floor(((m - 2 + 12) % 12) / 3) + 1;
+  const fy = (m >= 2 ? y + 1 : y) % 100;
+  const startMonth = ((q - 1) * 3 + 1) % 12; // 0-based month index of the quarter start
+  const startYear = m >= 2 ? y : y - 1;
+  const sy = startYear + Math.floor(((q - 1) * 3 + 1) / 12);
+  const start = `${sy}-${String(startMonth + 1).padStart(2, "0")}-01`;
+  return { key: `${fy}-${q}`, label: `FQ${q} FY${fy}`, short: `FQ${q}`, start };
+}
 
 /** Forecast category follows the deal's stage. */
 export type Category = "closed" | "commit" | "best" | "pipeline";

@@ -49,8 +49,8 @@ const SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: "Reporting",
     items: [
-      { label: "Q1 Forecast", icon: ChartColumnBig },
-      { label: "Slipping Deals", icon: TriangleAlert },
+      { label: "Q1 Forecast", icon: ChartColumnBig, href: "/reports/q1-forecast" },
+      { label: "Slipping Deals", icon: TriangleAlert, href: "/reports/slipping-deals" },
     ],
   },
   {

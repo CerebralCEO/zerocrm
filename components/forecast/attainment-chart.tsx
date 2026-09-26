@@ -1,6 +1,7 @@
 "use client";
 
-import { useId, useLayoutEffect, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
+import { useWidth } from "@/components/primitives/use-width";
 import { TODAY } from "@/lib/deals-store";
 import type { Forecast } from "@/lib/forecast";
 import { cn, formatCompactCurrency, formatNumber, formatShortDate } from "@/lib/utils";
@@ -18,18 +19,6 @@ function niceScale(max: number) {
 }
 
 const path = (pts: [number, number][]) => pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
-
-function useWidth() {
-  const [el, setEl] = useState<HTMLElement | null>(null);
-  const [width, setWidth] = useState(0);
-  useLayoutEffect(() => {
-    if (!el) return;
-    const ro = new ResizeObserver(([e]) => setWidth(Math.round(e.contentRect.width)));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [el]);
-  return { ref: setEl, width };
-}
 
 /**
  * Cumulative attainment for the period: closed-won to date (solid green with a

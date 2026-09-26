@@ -19,6 +19,8 @@ type DealsState = {
   openDealId: string | null;
   newDealOpen: boolean;
   newDealStage: StageId;
+  /** Close date to prefill (e.g. a Q1 date from the Q1 plan); null = 30 days out. */
+  newDealClose: string | null;
   lastMovedId: string | null;
 
   moveDeal: (id: string, stage: StageId) => void;
@@ -28,7 +30,7 @@ type DealsState = {
   setOwnerFilter: (id: string | null) => void;
   setCloseWindow: (w: CloseWindow) => void;
   openDeal: (id: string | null) => void;
-  openNewDeal: (stage?: StageId) => void;
+  openNewDeal: (stage?: StageId, closeDate?: string) => void;
   closeNewDeal: () => void;
 };
 
@@ -40,6 +42,7 @@ export const useDeals = create<DealsState>((set) => ({
   openDealId: null,
   newDealOpen: false,
   newDealStage: "discovery",
+  newDealClose: null,
   lastMovedId: null,
 
   moveDeal: (id, stage) =>
@@ -70,7 +73,7 @@ export const useDeals = create<DealsState>((set) => ({
   setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
   setCloseWindow: (closeWindow) => set({ closeWindow }),
   openDeal: (openDealId) => set({ openDealId }),
-  openNewDeal: (stage = "discovery") => set({ newDealOpen: true, newDealStage: stage }),
+  openNewDeal: (stage = "discovery", closeDate) => set({ newDealOpen: true, newDealStage: stage, newDealClose: closeDate ?? null }),
   closeNewDeal: () => set({ newDealOpen: false }),
 }));
 

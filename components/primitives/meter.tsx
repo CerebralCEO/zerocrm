@@ -8,7 +8,7 @@ const GREEN = "var(--color-meter-green)";
  * Colours for `filled` segments, split red → amber → green in thirds.
  * Matches the reference exactly: red = ⌊n/3⌋, amber = ⌈rest/2⌉, green = ⌊rest/2⌋.
  */
-function gradientColors(filled: number) {
+export function gradientColors(filled: number) {
   const red = Math.floor(filled / 3);
   const rest = filled - red;
   const amber = Math.ceil(rest / 2);

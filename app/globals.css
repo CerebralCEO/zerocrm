@@ -69,6 +69,12 @@
   --animate-reveal: reveal 1100ms var(--ease-ios) both;
   --animate-bar-grow: bar-grow 700ms var(--ease-ios) both;
   --animate-live-pulse: live-pulse 2400ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-seg-in: seg-in 520ms var(--ease-pop) both;
+  --animate-deck-in: deck-in 460ms var(--ease-ios) both;
+  --animate-deck-out-left: deck-out-left 240ms var(--ease-exit) both;
+  --animate-deck-out-right: deck-out-right 240ms var(--ease-exit) both;
+  --animate-grow-x: grow-x 900ms var(--ease-ios) both;
+  --animate-bubble-in: bubble-in 620ms var(--ease-pop) both;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -129,6 +135,32 @@
   @keyframes live-pulse {
     0% { transform: scale(1); opacity: 0.55; }
     70%, 100% { transform: scale(3.2); opacity: 0; }
+  }
+  /* Gauge: segments light up one after another. */
+  @keyframes seg-in {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  /* Review deck: the next card slides in from the right; decided cards leave sideways. */
+  @keyframes deck-in {
+    from { opacity: 0; transform: translate3d(28px, 0, 0) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes deck-out-left {
+    to { opacity: 0; transform: translate3d(-36px, 0, 0) rotate(-2deg); }
+  }
+  @keyframes deck-out-right {
+    to { opacity: 0; transform: translate3d(36px, 0, 0) rotate(2deg); }
+  }
+  /* Timelines: a slip line travels from the original date to the current one. */
+  @keyframes grow-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  /* Bubble chart: bubbles pop in from their centre. */
+  @keyframes bubble-in {
+    from { opacity: 0; transform: scale(0.2); }
+    to { opacity: 1; transform: scale(1); }
   }
   /* Kanban: a dropped / created card glows indigo, then settles into its own fill. */
   @keyframes card-wash {

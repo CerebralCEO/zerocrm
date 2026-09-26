@@ -80,14 +80,28 @@ export function Select({
   );
 }
 
-export function Slider({ value, onValueChange, label }: { value: number; onValueChange: (v: number) => void; label: string }) {
+export function Slider({
+  value,
+  onValueChange,
+  label,
+  min = 0,
+  max = 100,
+  step = 1,
+}: {
+  value: number;
+  onValueChange: (v: number) => void;
+  label: string;
+  min?: number;
+  max?: number;
+  step?: number;
+}) {
   return (
     <RSlider.Root
       value={[value]}
       onValueChange={([v]) => onValueChange(v)}
-      min={0}
-      max={100}
-      step={1}
+      min={min}
+      max={max}
+      step={step}
       aria-label={label}
       className="relative flex h-4 w-full touch-none items-center select-none"
     >

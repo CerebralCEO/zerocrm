@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type Tone = { bg: string; border: string; text: string };
 
 /* Sampled from the reference: each tag is an opaque tinted pill with a 1px border. */
-const TONES: Record<string, Tone> = {
+export const TONES: Record<string, Tone> = {
   pilot: { bg: "#3e291d", border: "#764d35", text: "#eeb390" },
   blue: { bg: "#1d2b3e", border: "#23354c", text: "#bfdbfe" },
   green: { bg: "#23451d", border: "#2e5029", text: "#b1ebc5" },

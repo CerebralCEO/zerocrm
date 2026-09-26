@@ -86,6 +86,21 @@ const SEEDS: Seed[] = [
   ["d-lvmh-clienteling", "lvmh", "Clienteling pilot", 180000, "won", "sarah", 100, "2026-09-08", "Kickoff in Paris", "QBR Call", "2026-09-08"],
   ["d-disney-ads", "disney", "Ad analytics expansion", 245000, "won", "james", 100, "2026-08-19", "Onboard the ads team", "Demo", "2026-08-19"],
   ["d-snowflake-market", "snowflake", "Marketplace listing", 120000, "won", "grace", 100, "2026-09-15", "Co-marketing plan", "Pricing", "2026-09-15"],
+  // FQ1 FY28 (Feb – Apr 2027) — early pipeline for the Q1 plan
+  ["d-apple-fy28", "apple", "FY28 enterprise renewal", 640000, "qualified", "alex", 40, "2027-03-18", "Align on FY28 scope with procurement", "Exec", "2026-09-21"],
+  ["d-snow-cortex", "snowflake", "Cortex AI workloads", 360000, "proposal", "grace", 52, "2027-03-02", "Pricing workshop with data team", "Pricing", "2026-09-19"],
+  ["d-ms-copilot", "microsoft", "Copilot analytics add-on", 380000, "discovery", "mark", 20, "2027-02-26", "Discovery with the Copilot PMs", "Discovery", "2026-09-16"],
+  ["d-lvmh-asia", "lvmh", "APAC maisons rollout", 455000, "discovery", "sarah", 18, "2027-04-15", "Map APAC stakeholders", "Discovery", "2026-09-14"],
+  ["d-disney-parks2", "disney", "Parks phase two", 290000, "qualified", "james", 35, "2027-03-05", "Business case for phase two", "Demo", "2026-09-22"],
+  ["d-google-cloud", "google", "Cloud marketplace deal", 265000, "proposal", "kate", 55, "2027-02-18", "Marketplace private offer", "Renewal", "2026-09-24"],
+  ["d-shopify-plus", "shopify", "Plus merchant expansion", 210000, "qualified", "emma", 38, "2027-03-24", "Rebuild budget case for FY28", "Renewal", "2026-09-21"],
+  ["d-slack-grid", "slack", "Enterprise Grid migration", 310000, "discovery", "ava", 16, "2027-04-28", "Technical scoping call", "Discovery", "2026-09-17"],
+  ["d-stripe-intl", "stripe", "International billing", 240000, "discovery", "noah", 22, "2027-04-22", "Intro to the EMEA billing lead", "Discovery", "2026-09-15"],
+  ["d-united-cargo", "united", "Cargo analytics", 185000, "discovery", "nia", 15, "2027-04-08", "Cargo ops discovery", "Discovery", "2026-09-11"],
+  ["d-intercom-ai", "intercom", "AI agent seats", 175000, "qualified", "lina", 42, "2027-03-12", "Pilot success criteria", "Product", "2026-09-20"],
+  ["d-zoom-events", "zoom", "Events platform upsell", 150000, "proposal", "oliver", 58, "2027-02-12", "Partner quote review", "Partner", "2026-09-23"],
+  ["d-hubspot-apac", "hubspot", "APAC co-sell", 120000, "qualified", "chloe", 30, "2027-02-24", "Joint account plan", "QBR Call", "2026-09-18"],
+  ["d-airbnb-exp", "airbnb", "Experiences host tools", 98000, "discovery", "drew", 14, "2027-03-30", "Pricing discovery", "Pricing", "2026-09-12"],
 ];
 
 const KINDS: DealActivity["kind"][] = ["call", "email", "meeting", "note"];
