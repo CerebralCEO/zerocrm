@@ -1,6 +1,8 @@
 import { Sidebar } from "@/components/shell/sidebar";
 import { Topbar } from "@/components/shell/topbar";
 import { ProfileSheet } from "@/components/profile/profile-sheet";
+import { SearchCommand } from "@/components/companies/search-command";
+import { CompanyDetailSheet } from "@/components/companies/company-detail-sheet";
 
 export default function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +12,10 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
         <Topbar />
         {children}
       </main>
+      {/* App-wide overlays: reachable from every page (⌘K, notifications, deal → company). */}
       <ProfileSheet />
+      <SearchCommand />
+      <CompanyDetailSheet />
     </div>
   );
 }

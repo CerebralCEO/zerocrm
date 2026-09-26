@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, Search } from "lucide-react";
 import { useCrm } from "@/lib/store";
 import { CURRENT_USER } from "@/lib/data";
@@ -9,10 +11,22 @@ import { Avatar } from "@/components/primitives/avatar";
 import { NotificationsButton } from "./notifications";
 import { useTabIndicator } from "@/components/ui/use-tab-indicator";
 
-const TABS = ["Companies", "Deals", "Forecast"];
+// Top tabs double as section navigation; entries without an href are not built yet.
+const TABS: { label: string; href?: string }[] = [
+  { label: "Companies", href: "/companies" },
+  { label: "Deals", href: "/deals" },
+  { label: "Forecast" },
+];
+
+const TITLES: Record<string, string> = {
+  "/companies": "Companies",
+  "/deals": "Deals Board",
+};
 
 export function Topbar() {
-  const [tab, setTab] = useState("Companies");
+  const pathname = usePathname();
+  const tab = TABS.find((t) => t.href && pathname.startsWith(t.href))?.label ?? "Companies";
+  const title = TITLES[pathname] ?? "Companies";
   const setSearchOpen = useCrm((s) => s.setSearchOpen);
   const setProfileOpen = useCrm((s) => s.setProfileOpen);
   const setNavOpen = useCrm((s) => s.setNavOpen);
@@ -42,7 +56,7 @@ export function Topbar() {
           >
             <Menu className="size-[15px]" strokeWidth={1.75} />
           </button>
-          <h1 className="text-[17px] font-medium leading-none tracking-[-0.6px] text-fg">Companies</h1>
+          <h1 className="text-[17px] font-medium leading-none tracking-[-0.6px] text-fg">{title}</h1>
           <span className="flex h-5 items-center gap-1 rounded-full border border-white/[0.08] bg-[#222] pr-[5px] pl-[5px] text-[12px] font-medium leading-none text-fg">
             <span className="size-2 rounded-full bg-active" />
             Active
@@ -72,21 +86,28 @@ export function Topbar() {
       </div>
 
       <nav ref={tabsRef} className="relative flex h-[44px] items-end gap-[17px] px-4">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            type="button"
-            data-active={tab === t}
-            onClick={() => setTab(t)}
-            className={cn(
-              "relative pb-[16px] text-[12px] leading-none transition-colors",
-              tab === t ? "font-medium text-fg" : "text-fg-muted hover:text-fg-soft",
-            )}
-          >
-            {t}
-            {tab === t && !underline && <span className="absolute -inset-x-[2px] -bottom-px h-px bg-fg" />}
-          </button>
-        ))}
+        {TABS.map((t) => {
+          const active = tab === t.label;
+          const className = cn(
+            "relative pb-[16px] text-[12px] leading-none transition-colors",
+            active ? "font-medium text-fg" : "text-fg-muted hover:text-fg-soft",
+          );
+          const content = (
+            <>
+              {t.label}
+              {active && !underline && <span className="absolute -inset-x-[2px] -bottom-px h-px bg-fg" />}
+            </>
+          );
+          return t.href ? (
+            <Link key={t.label} href={t.href} data-active={active} className={className}>
+              {content}
+            </Link>
+          ) : (
+            <button key={t.label} type="button" data-active={false} title="Coming soon" className={className}>
+              {content}
+            </button>
+          );
+        })}
         {underline && (
           <span
             aria-hidden

@@ -64,6 +64,8 @@
   --animate-pop-out: pop-out 160ms var(--ease-exit);
   --animate-check-pop: check-pop 320ms var(--ease-pop);
   --animate-row-in: row-in 1600ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-card-wash: card-wash 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-lift: lift 240ms var(--ease-pop) both;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -109,6 +111,15 @@
   @keyframes check-pop {
     from { transform: scale(0.4); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+  }
+  /* Kanban: a dropped / created card glows indigo, then settles into its own fill. */
+  @keyframes card-wash {
+    from { background-color: rgb(67 39 250 / 0.16); border-color: rgb(107 86 255 / 0.55); }
+  }
+  /* Kanban: the drag overlay lifts off the board. */
+  @keyframes lift {
+    from { transform: scale(1) rotate(0deg); box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
+    to { transform: scale(1.03) rotate(1.5deg); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55); }
   }
   /* New rows fade in with a soft accent wash that settles into the row's own background. */
   @keyframes row-in {

@@ -35,6 +35,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Footer calculations** — companies in view, sum of pipeline, average win probability.
 - **CSV export** of exactly what's on screen (respects filters and sort).
 
+### Deals board
+- **Kanban pipeline** across Discovery → Qualified → Proposal → Negotiation → Closed Won, with per-stage totals and weighted value.
+- **KPI strip** — open pipeline, weighted forecast, closed won and average deal size, always in sync with the filters.
+- **Drag & drop that feels native** — mouse drag, touch long-press (quick swipes still scroll), and full keyboard support (Space · ←/→ · Enter) with screen-reader announcements. Cards lift with a spring, drop into place and glow once.
+- **Deal detail** — value, weighted forecast, stage track, editable stage / win probability / next step, and a recent-activity timeline.
+- **New Deal** from the toolbar or any column's `+` (the stage is preselected), sort within columns, filter by owner and close date (incl. *Overdue*), CSV export.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -65,6 +72,17 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   </tr>
   <tr>
     <td colspan="2"><img src="./docs/screenshots/desktop-profile.png" alt="My profile" /><p align="center"><sub><b>My profile</b> — team pipeline and ranked accounts</sub></p></td>
+  </tr>
+</table>
+
+### Deals board
+
+<img src="./docs/screenshots/desktop-deals.png" alt="Deals board — Kanban pipeline" width="100%" />
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-deals-drag.png" alt="Dragging a deal between stages" /><p align="center"><sub><b>Drag & drop</b> — spring lift, dimmed source, smooth drop</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-deal-detail.png" alt="Deal detail sheet" /><p align="center"><sub><b>Deal detail</b> — stage track, win probability, activity</sub></p></td>
   </tr>
 </table>
 
@@ -116,6 +134,7 @@ Or build it anywhere that runs Node: `pnpm build && pnpm start`. Every route is 
 | Styling | [Tailwind CSS v4](https://tailwindcss.com) — CSS-first `@theme` tokens, no config file |
 | UI primitives | [Radix UI](https://www.radix-ui.com) (Dialog, Dropdown Menu, Popover, Select, Slider) — fully restyled |
 | Command palette | [cmdk](https://cmdk.paco.me) |
+| Drag & drop | [dnd-kit](https://dndkit.com) |
 | State | [Zustand](https://zustand.docs.pmnd.rs) |
 | Icons | [Lucide](https://lucide.dev) · brand logos from [Simple Icons](https://simpleicons.org) |
 | Avatars | [DiceBear](https://www.dicebear.com) — *Avataaars* style, generated locally |
@@ -130,12 +149,14 @@ zerocrm/
 ├── app/
 │   ├── (crm)/
 │   │   ├── layout.tsx            # App shell: sidebar + topbar + profile sheet
-│   │   └── companies/page.tsx    # Toolbar, table, detail sheet, dialogs
+│   │   ├── companies/page.tsx    # Toolbar, table, new-company dialog
+│   │   └── deals/page.tsx        # KPI strip, Kanban board, deal sheet, new-deal dialog
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
 ├── components/
 │   ├── companies/                # Table, toolbar, detail sheet, new-company dialog, ⌘K search
+│   ├── deals/                    # Kanban board, deal card, KPI strip, deal sheet, new-deal dialog
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -145,6 +166,7 @@ zerocrm/
 │       └── use-tab-indicator.ts  # Gliding tab underline
 ├── lib/
 │   ├── data.ts                   # Types + mock companies, owners, notifications
+│   ├── deals.ts / deals-store.ts # Deal stages, mock deals and the deals store
 │   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
@@ -193,7 +215,8 @@ Every colour and measurement was sampled from the reference design and lives as 
 
 - [ ] Persistence (PostgreSQL + Drizzle) behind Server Actions
 - [ ] Authentication and team workspaces
-- [ ] Deals board (Kanban) and Forecast views
+- [x] Deals board (Kanban) with drag & drop
+- [ ] Forecast, Activities, Contacts and Email Sequences views
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
 - [ ] Light theme

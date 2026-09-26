@@ -369,6 +369,43 @@ components:
     border: "1px #3a3a3a"
     typography: "{typography.kbd}"
     rounded: "{rounded.kbd}"
+  page-toolbar:
+    height: "{spacing.toolbar-h}"
+    padding: "0 16px"
+    borderBottom: "1px {colors.hairline}"
+    left: "filter-chip × n (8px gap) — collapses to one Filters popover below md"
+    right: "button-secondary (Export) + button-primary, 4px gap"
+  kpi-strip:
+    borderBottom: "1px {colors.hairline}"
+    cellPadding: "14px 16px"
+    cellDivider: "1px {colors.hairline}"
+    label: "{typography.label} {colors.muted} + 12px icon"
+    value: "{typography.metric} {colors.ink}, muted $ prefix"
+    meta: "{typography.label} {colors.muted}, highlighted number in {colors.body} or {colors.meter-green}"
+  kanban-column:
+    width: "flex-1, min 292px (≥ md) · 86vw, max 360px, snap-start (phone)"
+    divider: "1px {colors.hairline} between columns — no column fill"
+    header: "16px 16px 12px; stage tag + count-badge + 24px add button; total {typography.body-strong} + weighted {typography.label}"
+    body: "12px side padding, 8px gap, own vertical scroll"
+    over: "background rgba(255,255,255,0.022)"
+    empty: "96px dashed {colors.hairline-overlay} box, {typography.label} {colors.muted}"
+  deal-card:
+    backgroundColor: "{colors.surface-card}"
+    border: "1px {colors.border-card}"
+    hoverBorder: "#3a3c3f"
+    focusBorder: "#55585c"
+    rounded: "{rounded.md}"
+    padding: 12px
+    rows: "20px logo + {typography.body-strong} company + ⋯ · {typography.label} title · value + win-meter · hairline · 18px avatar owner + close date"
+  deal-card-lifted:
+    animation: "lift — scale 1.03, rotate 1.5deg, shadow 0 16px 40px rgba(0,0,0,.55), 240ms --ease-pop"
+  deal-card-dimmed:
+    opacity: 0.4
+  stage-track:
+    segments: "5 × 6px bars, 4px gap, {rounded.bar}"
+    filled: "{colors.meter-green} (completed + current)"
+    empty: "{colors.meter-empty-bar}"
+    labels: "11px, current {colors.ink} 500, others {colors.muted}"
 ---
 
 ## Overview
@@ -536,16 +573,22 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Command palette** — 960px `dialog` at 116px from top; 48px search row with `kbd` Esc; 44px result rows with `{colors.surface-pressed}` selection; keyboard-hint footer.
 - **Notification item** — 32px avatar with a 13px company-logo badge, `body-copy` with bold actor, optional quote block (`surface-raised`, border `#3a3a3a`), `label` meta line "time · company", 6px unread dot; unread items filled `{colors.surface-unread}`.
 
+- **`page-toolbar`** — shared by every page (`components/ui/toolbar.tsx`): chips left, Export + primary action right; below `md` the chips move into a *Filters* popover with a `micro` count of active filters.
+- **`kpi-strip`** — hairline-separated metric cells directly under the toolbar (never cards). Desktop 4-up, tablet 2×2, phone a single swipeable row of 68vw cells with snap.
+- **Kanban board** (Deals) — `kanban-column`s separated by hairlines on the bare canvas; each column scrolls vertically on its own and the board scrolls horizontally (column snap on phones, paused while dragging). Column header = stage `tag` (Discovery `tag-blue`, Qualified `tag-purple`, Proposal `tag-yellow`, Negotiation `tag-orange`, Closed Won `tag-land`) + `count-badge` + add button, then total and weighted value.
+- **`deal-card`** — the one place the page uses a filled card, because cards are the draggable objects. Overdue close dates switch to `{colors.alert}` with an "Overdue ·" prefix. The ⋯ menu offers Open deal, View company, Move to next stage and Mark as won (a no-drag path for keyboard and touch users).
+- **Drag & drop** — mouse: 6px drag threshold; touch: 180ms long-press (quick swipes still scroll); keyboard: Space to pick up, ←/→ to jump columns, Space/Enter to drop, Esc to cancel, with screen-reader announcements. The overlay is `deal-card-lifted`; the source card dims (`deal-card-dimmed`); the drop settles on `--ease-ios` (420ms) and the landed card plays `card-wash`.
+- **`stage-track`** — five-step progress bar in the deal sheet.
+- **Activity timeline (deal sheet)** — 28px `surface-raised` icon tiles on a 1px `{colors.hairline-overlay}` spine, `body-copy` text, `label` time.
+
 ### Footer
 The table footer is the only footer: 39px, four equal cells separated by hairlines, `label` text in `#7c7f7f`, `+ Add calculation` affordances. On phones it becomes a 2×2 grid.
 
 ### Extension patterns for upcoming pages (derived — not yet built)
 These are *compositions of the tokens above* for Deals Board, Forecast, Activities, Contacts and Email Sequences. Build from them; promote each to a real component entry once implemented.
-- **Kanban column** — header: stage `tag` + deal count `count-badge` + total value (`body-strong`) + compact `win-meter`; column body on `{colors.canvas}` with hairline column separators (no filled column background); 8px gap between cards.
-- **Deal card** — `surface-card` fill, `border-card`, `rounded.md`, 12px padding: `body-strong` company + 20px logo tile, value in `body` with muted `$`, owner avatar, `win-meter` compact, last-interaction line. Dragging lifts it with the Level 2 shadow and a 1.02 scale on `--ease-pop`.
-- **KPI strip** — a row of `stat-tile`s using `display-metric` for the value when it is the page hero; deltas in `label` coloured `{colors.meter-green}` (up) / `{colors.meter-red}` (down).
+- **KPI deltas** — when a metric needs a trend, append it to the `kpi-strip` meta line in `label`, coloured `{colors.meter-green}` (up) / `{colors.meter-red}` (down).
 - **Charts** — hairline gridlines `{colors.hairline}`, axis labels `label` `{colors.muted}`, series colours only from `{colors.primary}` (target/quota line), `{colors.spark}` (actual), `{colors.meter-amber}` (best case), `{colors.meter-empty}` (remaining); bars `rounded.bar`; no chart backgrounds, no legends boxed in cards — inline legends with 8px dots.
-- **Timeline (Activities)** — day group headers as `section-label`; items are 32px icon tiles (`surface-raised`, `rounded.md`) on a 1px `{colors.hairline}` spine, `body-copy` text with bold actor, `label` meta.
+- **Timeline (Activities page)** — scale up the deal-sheet activity timeline: day group headers as `section-label`, 32px icon tiles on a 1px `{colors.hairline}` spine, `body-copy` text with bold actor, `label` meta.
 - **Contact card (grid view)** — `surface-card`, `rounded.md`, 16px padding, 32px avatar, `body-strong` name, `label` role/company, tags row, `button-icon` actions revealed on hover (desktop) / always visible (touch).
 - **Stepper (Email Sequences)** — vertical steps as 8px-radius cards joined by a hairline spine, step index in a 24px `surface-raised` circle, open/reply rates as compact `win-meter`s.
 - **Empty state** — centered 13px `{colors.muted}` sentence inside the region; no illustrations.
@@ -604,6 +647,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 | `--ease-exit` | `cubic-bezier(.32,0,.67,0)` | All exits (~50% of entrance duration) |
 - Press: `scale: .97` in 90ms; wide list rows highlight instead.
 - New rows: fade/slide in with a 20% indigo wash that settles (1.6s) and scroll into view.
+- Kanban: `lift` 240ms on pick-up, drop animation 420ms `--ease-ios`, `card-wash` 1.4s on the landed card, drag auto-scroll capped at ~400px/s so a finger at the edge moves one column at a time.
 - Swipe-to-dismiss: 1:1 tracking, 0.2× rubber-band past rest, dismiss past 30% or at > 0.5 px/ms.
 - `prefers-reduced-motion` collapses everything to 1ms.
 
@@ -621,6 +665,6 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
-- **Charts, Kanban, timeline, contact grid, stepper** are *derived* patterns above, not measured from a reference.
-- **Deals / Forecast tabs and other sidebar destinations** have no content yet.
+- **Charts, full-page timeline, contact grid, stepper** are *derived* patterns above, not measured from a reference. The Kanban board, deal card, KPI strip and stage track were designed from this system (no external reference) and are now documented as built.
+- **Forecast, Activities, Contacts, Email Sequences** and the team/pipeline sidebar destinations have no pages yet (nav items show "Coming soon").
 - Backdrop-blur strength and `linear()` spring rendering vary slightly by browser; they are not pixel tokens.

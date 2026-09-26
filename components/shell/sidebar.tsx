@@ -17,19 +17,20 @@ import {
   WalletMinimal,
   type LucideIcon,
 } from "lucide-react";
-import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Dialog } from "radix-ui";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCrm } from "@/lib/store";
 import { useSwipeDismiss } from "@/components/ui/use-swipe-dismiss";
 
-type NavItem = { label: string; icon?: LucideIcon; badge?: string; dot?: string };
+type NavItem = { label: string; icon?: LucideIcon; badge?: string; dot?: string; href?: string };
 
 const MAIN: NavItem[] = [
-  { label: "Companies", icon: Building2, badge: "241" },
-  { label: "Deals Board", icon: Clipboard },
+  { label: "Companies", icon: Building2, badge: "241", href: "/companies" },
+  { label: "Deals Board", icon: Clipboard, href: "/deals" },
   { label: "Forecast", icon: ChartNoAxesColumn, badge: "9" },
   { label: "Activities", icon: List },
   { label: "Contacts", icon: Book, badge: "38" },
@@ -66,27 +67,16 @@ function BrandMark() {
   return <Image src="/logo/zerocrm-mark.png" alt="ZeroCRM" width={22} height={22} priority className="size-[22px]" />;
 }
 
-function NavRow({
-  item,
-  active,
-  onClick,
-}: {
-  item: NavItem;
-  active?: boolean;
-  onClick?: () => void;
-}) {
+function NavRow({ item, active, onClick }: { item: NavItem; active?: boolean; onClick?: () => void }) {
   const Icon = item.icon;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "no-press group flex w-full items-center gap-[6px] rounded-lg px-[6px] text-left text-[14px] leading-none outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/10",
-        active
-          ? "mb-[3px] h-[32px] border border-white/[0.13] bg-nav-active font-medium text-fg shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
-          : "h-[30px] border border-transparent font-medium text-fg-nav hover:bg-white/[0.03] hover:text-fg-soft active:bg-white/[0.05]",
-      )}
-    >
+  const className = cn(
+    "no-press group flex w-full items-center gap-[6px] rounded-lg px-[6px] text-left text-[14px] leading-none outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/10",
+    active
+      ? "mb-[3px] h-[32px] border border-white/[0.13] bg-nav-active font-medium text-fg shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
+      : "h-[30px] border border-transparent font-medium text-fg-nav hover:bg-white/[0.03] hover:text-fg-soft active:bg-white/[0.05]",
+  );
+  const content = (
+    <>
       {Icon ? (
         <Icon
           className={cn("size-[15px] shrink-0", active ? "text-fg" : "text-[#676767] group-hover:text-fg-soft")}
@@ -108,6 +98,16 @@ function NavRow({
           {item.badge}
         </span>
       )}
+    </>
+  );
+  // Routed items are links; the rest are placeholders for sections not built yet.
+  return item.href ? (
+    <Link href={item.href} onClick={onClick} aria-current={active ? "page" : undefined} className={className}>
+      {content}
+    </Link>
+  ) : (
+    <button type="button" title="Coming soon" onClick={onClick} className={className}>
+      {content}
     </button>
   );
 }
@@ -118,11 +118,10 @@ function SidebarContent({
   onClose,
 }: {
   active: string;
-  onNavigate: (label: string) => void;
+  onNavigate?: () => void;
   onClose?: () => void;
 }) {
   const setProfileOpen = useCrm((s) => s.setProfileOpen);
-  const setActive = onNavigate;
 
   return (
     <>
@@ -154,7 +153,7 @@ function SidebarContent({
               key={item.label}
               item={item}
               active={active === item.label}
-              onClick={() => setActive(item.label)}
+              onClick={item.href ? onNavigate : undefined}
             />
           ))}
         </div>
@@ -162,7 +161,10 @@ function SidebarContent({
         {SECTIONS.map((section, idx) => (
           <div
             key={section.title}
-            className={cn("flex flex-col px-3 pt-[11px] pb-[12px]", idx < SECTIONS.length - 1 && "border-b border-line")}
+            className={cn(
+              "flex flex-col px-3 pt-[11px] pb-[12px]",
+              idx < SECTIONS.length - 1 && "border-b border-line",
+            )}
           >
             <div className="mb-[5px] text-[11px] font-medium uppercase leading-none tracking-[1.7px] text-fg-faint">
               {section.title}
@@ -172,7 +174,7 @@ function SidebarContent({
                 key={item.label}
                 item={item}
                 active={active === item.label}
-                onClick={() => setActive(item.label)}
+                onClick={item.href ? onNavigate : undefined}
               />
             ))}
           </div>
@@ -208,16 +210,21 @@ function SidebarContent({
 }
 
 export function Sidebar() {
-  const [active, setActive] = useState("Companies");
+  const pathname = usePathname();
+  const active = MAIN.find((i) => i.href && pathname.startsWith(i.href))?.label ?? "";
   const navOpen = useCrm((s) => s.navOpen);
   const setNavOpen = useCrm((s) => s.setNavOpen);
-  const { panel: swipePanel } = useSwipeDismiss({ direction: "left", media: "(max-width: 1023px)", onDismiss: () => setNavOpen(false) });
+  const { panel: swipePanel } = useSwipeDismiss({
+    direction: "left",
+    media: "(max-width: 1023px)",
+    onDismiss: () => setNavOpen(false),
+  });
 
   return (
     <>
       {/* Desktop: fixed column (≥1024px) */}
       <aside className="hidden h-full w-[254px] shrink-0 flex-col border-r border-line bg-sidebar lg:flex">
-        <SidebarContent active={active} onNavigate={setActive} />
+        <SidebarContent active={active} />
       </aside>
 
       {/* Mobile / tablet: off-canvas drawer */}
@@ -230,14 +237,7 @@ export function Sidebar() {
             className="fixed inset-y-0 left-0 z-50 flex w-[280px] max-w-[85vw] touch-pan-y flex-col border-r border-line bg-sidebar outline-none data-[state=closed]:animate-nav-out data-[state=open]:animate-nav-in lg:hidden"
           >
             <Dialog.Title className="sr-only">Navigation</Dialog.Title>
-            <SidebarContent
-              active={active}
-              onNavigate={(label) => {
-                setActive(label);
-                setNavOpen(false);
-              }}
-              onClose={() => setNavOpen(false)}
-            />
+            <SidebarContent active={active} onNavigate={() => setNavOpen(false)} onClose={() => setNavOpen(false)} />
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
