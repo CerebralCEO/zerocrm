@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -28,6 +28,8 @@ import { EASE_IOS } from "@/lib/motion";
 import { cn, formatNumber } from "@/lib/utils";
 import { Tag } from "@/components/primitives/tag";
 import { DealCard } from "./deal-card";
+import { useDragScroll } from "@/components/companies/use-drag-scroll";
+import { useTabIndicator } from "@/components/ui/use-tab-indicator";
 import { useVisibleDeals } from "./deals-toolbar";
 
 /* Pointer first (precise), then overlap — keyboard drags have no pointer. */
@@ -145,12 +147,85 @@ function Column({ stage, deals, dragging }: { stage: Stage; deals: Deal[]; dragg
   );
 }
 
+/**
+ * Phone-only stage switcher above the board: tap to glide to a column; the
+ * active tab follows the board as it is swiped. Works with mouse, touch and keyboard.
+ */
+function StageTabs({ active, counts, onSelect }: { active: number; counts: number[]; onSelect: (i: number) => void }) {
+  const { ref, style: underline } = useTabIndicator(String(active));
+  const navRef = useRef<HTMLElement | null>(null);
+  const setNav = useCallback(
+    (el: HTMLElement | null) => {
+      navRef.current = el;
+      ref(el);
+    },
+    [ref],
+  );
+
+  // Keep the active tab in view as the board is swiped.
+  useEffect(() => {
+    navRef.current
+      ?.querySelector<HTMLElement>('[data-active="true"]')
+      ?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+  }, [active]);
+
+  return (
+    <nav
+      ref={setNav}
+      aria-label="Stages"
+      className="no-scrollbar relative flex h-[44px] shrink-0 items-end gap-5 overflow-x-auto border-b border-line px-4 md:hidden"
+    >
+      {STAGES.map((s, i) => (
+        <button
+          key={s.id}
+          type="button"
+          data-active={active === i}
+          aria-current={active === i ? "true" : undefined}
+          onClick={() => onSelect(i)}
+          className={cn(
+            "no-press relative flex shrink-0 items-center gap-[6px] pb-[13px] text-[12px] leading-none whitespace-nowrap transition-colors",
+            active === i ? "font-medium text-fg" : "text-fg-muted",
+          )}
+        >
+          {s.label}
+          <span className="flex h-4 min-w-5 items-center justify-center rounded-full border border-white/10 bg-[#222] px-1 text-[11px] font-medium text-fg-soft">
+            {counts[i]}
+          </span>
+          {active === i && !underline && <span className="absolute inset-x-0 bottom-0 h-px bg-fg" />}
+        </button>
+      ))}
+      {underline && (
+        <span
+          aria-hidden
+          className="absolute bottom-0 h-px bg-fg transition-[left,width] duration-500 ease-(--ease-ios)"
+          style={underline}
+        />
+      )}
+    </nav>
+  );
+}
+
 export function DealsBoard() {
   const deals = useVisibleDeals();
   const allDeals = useDeals((s) => s.deals);
   const moveDeal = useDeals((s) => s.moveDeal);
   const [activeId, setActiveId] = useState<string | null>(null);
   const active = activeId ? allDeals.find((d) => d.id === activeId) : undefined;
+  const scrollRef = useDragScroll<HTMLDivElement>();
+  const [column, setColumn] = useState(0);
+
+  // Which column is in view (phones show one at a time).
+  const onScroll = () => {
+    const el = scrollRef.current;
+    const first = el?.querySelector("section");
+    if (!el || !first) return;
+    setColumn(Math.min(STAGES.length - 1, Math.round(el.scrollLeft / first.offsetWidth)));
+  };
+  const goToColumn = (i: number) => {
+    const el = scrollRef.current;
+    const target = el?.querySelectorAll("section")[i];
+    if (el && target) el.scrollTo({ left: target.offsetLeft, behavior: "smooth" });
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
@@ -197,7 +272,21 @@ export function DealsBoard() {
       }}
       autoScroll={{ threshold: { x: 0.1, y: 0.18 }, acceleration: 2 }}
     >
+      <StageTabs
+        active={column}
+        counts={STAGES.map((s) => deals.filter((d) => d.stage === s.id).length)}
+        onSelect={goToColumn}
+      />
       <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        // Mouse wheel over a column header pans the board sideways.
+        onWheel={(e) => {
+          const el = scrollRef.current;
+          if (el && Math.abs(e.deltaY) > Math.abs(e.deltaX) && (e.target as HTMLElement).closest("section > header")) {
+            el.scrollLeft += e.deltaY;
+          }
+        }}
         className={cn(
           "table-scroll min-h-0 flex-1 overflow-x-auto overflow-y-hidden",
           // Column snapping on phones — paused mid-drag so auto-scroll can glide freely.

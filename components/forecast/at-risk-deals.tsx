@@ -55,18 +55,32 @@ export function AtRiskDeals({ f }: { f: Forecast }) {
               key={deal.id}
               type="button"
               onClick={() => openDeal(deal.id)}
-              className="no-press -mx-2 flex h-[43px] items-center gap-3 rounded-md border-b border-line px-2 text-left text-[14px] leading-none font-[450] text-fg transition-colors last:border-b-0 hover:bg-row-hover active:bg-row-hover"
+              className="no-press -mx-2 flex min-h-[43px] items-center gap-3 rounded-md border-b border-line px-2 text-left text-[14px] leading-none font-[450] text-fg transition-colors last:border-b-0 hover:bg-row-hover active:bg-row-hover max-sm:py-[10px]"
             >
-              <span className="flex w-[150px] shrink-0 items-center gap-2 max-sm:w-auto max-sm:flex-1">
+              <span className="flex w-[150px] shrink-0 items-center gap-2 max-sm:w-auto max-sm:min-w-0 max-sm:flex-1">
                 <CompanyLogo id={deal.companyId} src={company?.logo} size={20} glyph={11} radius={5} />
-                <span className="truncate font-medium">{company?.name}</span>
+                <span className="flex min-w-0 flex-col gap-[6px]">
+                  <span className="truncate font-medium">{company?.name}</span>
+                  {/* Phone: the deal title moves under the company name */}
+                  <span className="truncate text-[12px] text-fg-soft/80 sm:hidden">{deal.title}</span>
+                </span>
               </span>
               <span className="hidden min-w-0 flex-1 truncate text-[12px] text-fg-soft/80 sm:block">{deal.title}</span>
               <span className="hidden w-[104px] shrink-0 lg:block">
                 <Tag tone={stage.tone}>{stage.label}</Tag>
               </span>
-              <span className="w-[118px] shrink-0 max-sm:w-auto">
+              <span className="w-[118px] shrink-0 max-sm:hidden">
                 <Tag tone={REASON_TONE[reason]}>{reason}</Tag>
+              </span>
+              {/* Phone: value + reason stacked on the right */}
+              <span className="flex shrink-0 flex-col items-end gap-[6px] sm:hidden">
+                <span className="tabular-nums">
+                  <span className="mr-[4px] text-[#7f7f7f]">$</span>
+                  {formatNumber(deal.value)}
+                </span>
+                <Tag tone={REASON_TONE[reason]} className="h-5 px-[6px] text-[12px]">
+                  {reason}
+                </Tag>
               </span>
               <span className="hidden w-[96px] shrink-0 text-right tabular-nums md:block">
                 <span className="mr-[4px] text-[#7f7f7f]">$</span>

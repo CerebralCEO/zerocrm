@@ -383,10 +383,11 @@ components:
     right: "button-secondary (Export) + button-primary, 4px gap"
   kpi-strip:
     borderBottom: "1px {colors.hairline}"
-    cellPadding: "14px 16px"
+    cellPadding: "14px 16px (12px 16px below sm)"
+    layout: "4 across ≥ lg · 2×2 below lg — never a swipe row, so every value is reachable by mouse too"
     cellDivider: "1px {colors.hairline}"
     label: "{typography.label} {colors.muted} + 12px icon"
-    value: "{typography.metric} {colors.ink}, muted $ prefix"
+    value: "{typography.metric} {colors.ink} (20px below sm), muted $ prefix"
     meta: "{typography.label} {colors.muted}, highlighted number in {colors.body} or {colors.meter-green}"
   kanban-column:
     width: "flex-1, min 292px (≥ md) · 86vw, max 360px, snap-start (phone)"
@@ -454,6 +455,12 @@ components:
     height: "{spacing.row-h}"
     content: "logo + company · title · stage tag · reason tag · value · win-meter · close date"
     reasonTones: "Overdue → tag-red · Low confidence → tag-orange · Closing soon → tag-yellow"
+  stage-tabs:
+    height: "{spacing.tabs-h}"
+    visibility: "below md only (the board shows one column at a time)"
+    item: "{typography.control}, active {colors.ink} 500 / inactive {colors.muted}, 20px apart, count-badge (11px)"
+    indicator: "1px {colors.ink} underline gliding on --ease-ios (500ms)"
+    behaviour: "tap → smooth-scroll to column; board scroll → active tab follows"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -627,9 +634,11 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Notification item** — 32px avatar with a 13px company-logo badge, `body-copy` with bold actor, optional quote block (`surface-raised`, border `#3a3a3a`), `label` meta line "time · company", 6px unread dot; unread items filled `{colors.surface-unread}`.
 
 - **`page-toolbar`** — shared by every page (`components/ui/toolbar.tsx`): chips left, Export + primary action right; below `md` the chips move into a *Filters* popover with a `micro` count of active filters.
-- **`kpi-strip`** — hairline-separated metric cells directly under the toolbar (never cards). Desktop 4-up, tablet 2×2, phone a single swipeable row of 68vw cells with snap.
+- **`kpi-strip`** — hairline-separated metric cells directly under the toolbar (never cards). Desktop 4-up, 2×2 below `lg` with a 20px value on phones. Not a swipe row: mouse users in narrow windows could not reach hidden cells.
 - **Kanban board** (Deals) — `kanban-column`s separated by hairlines on the bare canvas; each column scrolls vertically on its own and the board scrolls horizontally (column snap on phones, paused while dragging). Column header = stage `tag` (Discovery `tag-blue`, Qualified `tag-purple`, Proposal `tag-yellow`, Negotiation `tag-orange`, Closed Won `tag-land`) + `count-badge` + add button, then total and weighted value.
 - **`deal-card`** — the one place the page uses a filled card, because cards are the draggable objects. Overdue close dates switch to `{colors.alert}` with an "Overdue ·" prefix. The ⋯ menu offers Open deal, View company, Move to next stage and Mark as won (a no-drag path for keyboard and touch users).
+- **`stage-tabs`** — phone-only switcher above the board so columns are reachable without gestures.
+- **Board navigation** — besides touch swipes: mouse click-drag on any empty board area pans with inertia (cards and buttons are excluded so they still drag/click), the mouse wheel over a column header pans sideways, and Shift+wheel works everywhere. Snapping pauses while panning.
 - **Drag & drop** — mouse: 6px drag threshold; touch: 180ms long-press (quick swipes still scroll); keyboard: Space to pick up, ←/→ to jump columns, Space/Enter to drop, Esc to cancel, with screen-reader announcements. The overlay is `deal-card-lifted`; the source card dims (`deal-card-dimmed`); the drop settles on `--ease-ios` (420ms) and the landed card plays `card-wash`.
 - **`stage-track`** — five-step progress bar in the deal sheet.
 - **`panel`** (Forecast) — page regions laid out in a CSS grid whose gutters are hairlines; each panel is a title/subtitle header plus content, never a card. Legends sit in the header's right slot.
@@ -693,9 +702,11 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Sidebar** → swipe-to-close drawer.
 - **Toolbar** → *Filters* popover + Export + New Company on one 62px row.
 - **Table** → unchanged grid, horizontal scroll (touch swipe or mouse click-drag with inertia); footer becomes 2×2.
+- **Kanban** → one column per screen (86vw, snap) with `stage-tabs` above; KPI strip 2×2.
+- **Rule:** every horizontally scrolling region must also be operable with a mouse in a narrow window (tabs, click-drag pan or header wheel) — never rely on touch swipes alone.
 - **Sheets / New Company** → bottom sheets, dismissable by dragging the header down.
 - **Topbar** → hamburger added, user pill shows avatar only.
-- **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; risk rows keep company + reason only below `sm`.
+- **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; below `sm` risk rows become two-line (company over deal title, value over reason tag).
 
 ### Image Behavior
 Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data URIs; the brand mark is a 187px transparent PNG rendered at 22px via `next/image`. No responsive image sets are needed.

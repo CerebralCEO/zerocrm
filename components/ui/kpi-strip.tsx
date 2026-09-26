@@ -16,13 +16,13 @@ export function KpiCell({
   aside?: React.ReactNode;
 }) {
   return (
-    <div className="flex min-w-0 shrink-0 snap-start flex-col gap-[10px] border-line px-4 py-[14px] max-sm:w-[68vw]">
+    <div className="flex min-w-0 flex-col gap-[9px] border-line px-4 py-3 sm:gap-[10px] sm:py-[14px]">
       <span className="flex items-center gap-[6px] text-[12px] leading-none text-fg-muted">
         <Icon className="size-[12px]" strokeWidth={1.75} />
         {label}
       </span>
       <div className="flex items-center justify-between gap-3">
-        <span className="truncate text-[24px] font-medium leading-none tracking-[-0.5px] text-fg tabular-nums">
+        <span className="truncate text-[20px] font-medium leading-none tracking-[-0.5px] text-fg tabular-nums sm:text-[24px]">
           <span className="mr-[3px] text-[#7f7f7f]">$</span>
           {formatNumber(value)}
         </span>
@@ -35,11 +35,11 @@ export function KpiCell({
 
 /**
  * Hairline-separated KPI cells under the toolbar ({components.kpi-strip}).
- * Phone: one swipeable row · tablet: 2×2 · desktop: 4 across.
+ * 2×2 below lg (every value visible without swiping) · 4 across on desktop.
  */
 export function KpiStrip({ children }: { children: React.ReactNode }) {
   return (
-    <div className="no-scrollbar flex shrink-0 snap-x snap-mandatory overflow-x-auto overscroll-x-contain border-b border-line sm:grid sm:grid-cols-2 lg:grid-cols-4 [&>*]:border-line max-sm:[&>*:not(:last-child)]:border-r sm:max-lg:[&>*:nth-child(-n+2)]:border-b sm:max-lg:[&>*:nth-child(odd)]:border-r lg:[&>*:not(:last-child)]:border-r">
+    <div className="grid shrink-0 grid-cols-2 border-b border-line lg:grid-cols-4 [&>*]:border-line max-lg:[&>*:nth-child(-n+2)]:border-b max-lg:[&>*:nth-child(odd)]:border-r lg:[&>*:not(:last-child)]:border-r">
       {children}
     </div>
   );
