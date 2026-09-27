@@ -1,5 +1,5 @@
 import { DEALS } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 
 export type ActivityKind = "call" | "email" | "meeting" | "note" | "task";
 

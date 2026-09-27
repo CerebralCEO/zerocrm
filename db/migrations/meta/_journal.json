@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790474304022,
+      "tag": "0000_ambitious_nocturne",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790475088620,
+      "tag": "0001_sharp_cassandra_nova",
+      "breakpoints": true
+    }
+  ]
+}

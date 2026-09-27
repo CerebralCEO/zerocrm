@@ -1,7 +1,7 @@
 import type { Activity } from "./activities";
 import type { Company } from "./data";
 import type { Deal } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 
 /**
  * Company numbers are never stored — they are computed from the deals board

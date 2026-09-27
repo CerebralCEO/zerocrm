@@ -1,40 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
-// Importing the stores registers them for persistence.
-import "@/lib/store";
-import "@/lib/deals-store";
-import "@/lib/activities-store";
-import "@/lib/contacts-store";
-import "@/lib/sequences-store";
-import "@/lib/teams-store";
-import "@/lib/invoices-store";
-import "@/lib/slips-store";
-import "@/lib/forecast-store";
-import "@/lib/q1-store";
-import { persisted } from "@/lib/persist";
+import { useEffect, useState } from "react";
+import type { Snapshot } from "@/db/snapshot";
+import { applySnapshot, startDbSync } from "@/lib/db-sync";
 import { wireEvents } from "@/lib/wire";
 
 wireEvents();
 
 /**
- * Keeps the app's data alive and in sync: restores every store from the
- * browser after the first render (so SSR markup still matches), and when
- * another tab saves a change, reloads that store here — every open tab shows
- * the same numbers in real time.
+ * Neon is the single source of truth. With a database, every store change is
+ * written back to it and every open tab / device pulls other people's changes
+ * every few seconds. Without one, ZeroCRM runs on in-memory demo data that
+ * resets on reload.
  */
-export function StoreSync() {
+export function StoreSync({ mode, loadedAt }: { mode: "db" | "memory"; loadedAt: string | null }) {
   useEffect(() => {
-    persisted.forEach((s) => s.persist.rehydrate());
-    const onStorage = (e: StorageEvent) => {
-      if (!e.key) {
-        persisted.forEach((s) => s.persist.rehydrate());
-        return;
-      }
-      persisted.find((s) => s.persist.getOptions().name === e.key)?.persist.rehydrate();
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    if (mode === "db" && loadedAt) return startDbSync(loadedAt);
+  }, [mode, loadedAt]);
+  return null;
+}
+
+/**
+ * Seeds the stores with the database snapshot before anything else renders,
+ * so server HTML and the first client render show the same (live) data.
+ */
+export function DbHydrate({ snapshot }: { snapshot: Snapshot | null }) {
+  useState(() => {
+    if (snapshot) applySnapshot(snapshot);
+    return null;
+  });
   return null;
 }

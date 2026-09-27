@@ -1,5 +1,5 @@
 import type { Deal } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 
 /**
  * Fiscal calendar: the fiscal year starts Feb 1, so FQ3 = Aug–Oct and

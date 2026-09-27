@@ -85,8 +85,13 @@ export function Modal({
   className,
   title,
   description,
-}: Base & { title: string; description?: string }) {
-  const { panel: swipePanel, handle: swipeHandle } = useSwipeDismiss({ direction: "down", media: "(max-width: 639px)", onDismiss: () => onOpenChange(false) });
+  dismissible = true,
+}: Base & { title: string; description?: string; /** false = no close button, Esc, outside click or swipe (required steps). */ dismissible?: boolean }) {
+  const { panel: swipePanel, handle: swipeHandle } = useSwipeDismiss({
+    direction: "down",
+    media: "(max-width: 639px)",
+    onDismiss: () => dismissible && onOpenChange(false),
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -94,6 +99,9 @@ export function Modal({
         <Overlay className="bg-black/25" />
         <Dialog.Content
           ref={swipePanel}
+          onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
+          onPointerDownOutside={(e) => !dismissible && e.preventDefault()}
+          onInteractOutside={(e) => !dismissible && e.preventDefault()}
           className={cn(
             "fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-xl border border-[#2a2a2a] bg-panel shadow-[0_24px_64px_rgba(0,0,0,0.6)] outline-none",
             "data-[state=closed]:animate-sheet-down data-[state=open]:animate-sheet-up",
@@ -111,12 +119,14 @@ export function Modal({
                 {description}
               </Dialog.Description>
             )}
-            <Dialog.Close
-              aria-label="Close"
-              className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-white/[0.06] hover:text-fg sm:top-[16px] sm:right-[16px] sm:size-6"
-            >
-              <X className="size-[12px]" strokeWidth={2} />
-            </Dialog.Close>
+            {dismissible && (
+              <Dialog.Close
+                aria-label="Close"
+                className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-white/[0.06] hover:text-fg sm:top-[16px] sm:right-[16px] sm:size-6"
+              >
+                <X className="size-[12px]" strokeWidth={2} />
+              </Dialog.Close>
+            )}
           </div>
           {children}
         </Dialog.Content>

@@ -1,6 +1,6 @@
 import type { ActivityKind } from "./activities";
 import { addDays } from "./activities";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 
 export type Persona = "Champion" | "Decision maker" | "Economic buyer" | "Influencer" | "Technical" | "Blocker";
 

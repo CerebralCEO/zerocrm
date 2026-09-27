@@ -5,9 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Search } from "lucide-react";
 import { useCrm } from "@/lib/store";
-import { CURRENT_USER } from "@/lib/data";
+import { UserMenu } from "./user-menu";
 import { cn } from "@/lib/utils";
-import { Avatar } from "@/components/primitives/avatar";
 import { NotificationsButton } from "./notifications";
 import { useTabIndicator } from "@/components/ui/use-tab-indicator";
 
@@ -42,7 +41,6 @@ export function Topbar() {
   const tab = TABS.find((t) => t.href && pathname.startsWith(t.href))?.label ?? null;
   const title = TITLES[pathname] ?? "Companies";
   const setSearchOpen = useCrm((s) => s.setSearchOpen);
-  const setProfileOpen = useCrm((s) => s.setProfileOpen);
   const setNavOpen = useCrm((s) => s.setNavOpen);
   const { ref: tabsRef, style: underline } = useTabIndicator(tab ?? "none", 2);
 
@@ -87,15 +85,7 @@ export function Topbar() {
             <Search className="size-[14px]" strokeWidth={1.75} />
           </button>
           <NotificationsButton />
-          <button
-            type="button"
-            onClick={() => setProfileOpen(true)}
-            aria-label="My profile"
-            className="flex h-[30px] items-center gap-[6px] rounded-full border border-white/[0.09] bg-[#1b1b1b] pr-[4px] pl-[4px] text-[12px] font-normal tracking-[-0.1px] text-fg transition-colors hover:bg-[#232323] sm:pr-[8px]"
-          >
-            <Avatar name={CURRENT_USER.name} size={20} />
-            <span className="hidden sm:inline">{CURRENT_USER.name}</span>
-          </button>
+          <UserMenu />
         </div>
       </div>
 

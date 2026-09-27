@@ -1,5 +1,5 @@
 import type { Deal } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 import { PERIODS, Q1_FY28 } from "./forecast";
 import { OWNERS } from "./data";
 

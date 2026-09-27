@@ -1,5 +1,5 @@
 import type { Deal } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 
 /**
  * Invoices are raised from Closed Won deals. Status is stored as the last

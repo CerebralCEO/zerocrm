@@ -1,8 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { persistOptions, track } from "./persist";
 import { CONTACTS, type Contact, type Persona } from "./contacts";
 import { emit } from "./events";
 
@@ -34,39 +32,32 @@ type ContactsState = {
   addContact: (c: Omit<Contact, "id">) => void;
 };
 
-export const useContacts = track(
-  create<ContactsState>()(
-    persist(
-      (set) => ({
-        contacts: CONTACTS,
-        query: "",
-        sortBy: "name",
-        persona: null,
-        ownerFilter: null,
-        show: "all",
-        view: "grid",
-        openId: null,
-        newOpen: false,
-        lastAddedId: null,
+export const useContacts = create<ContactsState>((set) => ({
+  contacts: CONTACTS,
+  query: "",
+  sortBy: "name",
+  persona: null,
+  ownerFilter: null,
+  show: "all",
+  view: "grid",
+  openId: null,
+  newOpen: false,
+  lastAddedId: null,
 
-        setQuery: (query) => set({ query }),
-        setSortBy: (sortBy) => set({ sortBy }),
-        setPersona: (persona) => set({ persona }),
-        setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
-        setShow: (show) => set({ show }),
-        setView: (view) => set({ view }),
-        openContact: (openId) => set({ openId }),
-        setNewOpen: (newOpen) => set({ newOpen }),
-        toggleStar: (id) => set((s) => ({ contacts: s.contacts.map((c) => (c.id === id ? { ...c, starred: !c.starred } : c)) })),
-        addContact: (c) => {
-          set((s) => {
-            const id = `c-new-${s.contacts.length}-${Date.now().toString(36)}`;
-            return { contacts: [...s.contacts, { ...c, id }], lastAddedId: id };
-          });
-          emit({ text: `added contact ${c.name}`, body: c.role, companyId: c.companyId, ownerId: c.ownerId, notify: true });
-        },
-      }),
-      persistOptions<ContactsState, "contacts">("contacts", ["contacts"]),
-    ),
-  ),
-);
+  setQuery: (query) => set({ query }),
+  setSortBy: (sortBy) => set({ sortBy }),
+  setPersona: (persona) => set({ persona }),
+  setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
+  setShow: (show) => set({ show }),
+  setView: (view) => set({ view }),
+  openContact: (openId) => set({ openId }),
+  setNewOpen: (newOpen) => set({ newOpen }),
+  toggleStar: (id) => set((s) => ({ contacts: s.contacts.map((c) => (c.id === id ? { ...c, starred: !c.starred } : c)) })),
+  addContact: (c) => {
+    set((s) => {
+      const id = `c-new-${s.contacts.length}-${Date.now().toString(36)}`;
+      return { contacts: [...s.contacts, { ...c, id }], lastAddedId: id };
+    });
+    emit({ text: `added contact ${c.name}`, body: c.role, companyId: c.companyId, ownerId: c.ownerId, notify: true });
+  },
+}));

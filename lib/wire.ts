@@ -1,8 +1,8 @@
 "use client";
 
 import { useActivities } from "./activities-store";
-import { CURRENT_USER } from "./data";
-import { TODAY } from "./deals-store";
+import { currentActor } from "./current-user";
+import { TODAY } from "./clock";
 import { onEvent } from "./events";
 import { useCrm } from "./store";
 import { useSlips } from "./slips-store";
@@ -33,13 +33,13 @@ export function wireEvents() {
       ownerId: e.ownerId,
       at: stamp(),
       done: true,
-      actor: CURRENT_USER.name,
+      actor: currentActor(),
     });
     if (e.push && e.dealId) useSlips.getState().recordPush(e.dealId, e.push.from, e.push.to);
     if (e.notify) {
       const company = useCrm.getState().companies.find((c) => c.id === e.companyId);
       useCrm.getState().pushNotification({
-        actor: CURRENT_USER.name,
+        actor: currentActor(),
         companyId: e.companyId,
         company: company?.name ?? e.companyId,
         text: e.text,

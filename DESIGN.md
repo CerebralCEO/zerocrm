@@ -938,7 +938,17 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - Numbers are **derived, never stored**: company metrics come from deals + activity (`lib/company-metrics.ts`), contacts' last touch from activity, and every report from the deals store. New UI must read these hooks (`useCompanies`, `useLiveContacts`, the page data hooks) rather than the raw seeds.
 - Stores never import each other to report changes; they `emit()` a `CrmEvent` and `lib/wire.ts` records it. System events are kept apart from logged activity (`events` vs `activities`) so rep activity counts stay honest.
 - **`feed-event`** — system entries in the activity feed and deal timeline: the `activity-icon` tile with a `Zap` glyph, "{actor} {what happened} · {company}" in `{typography.body-copy}`, detail line in `{typography.label}`. Wins, payments and new records also raise a notification.
-- Domain stores persist to `localStorage` (`zerocrm:v1:*`), rehydrate after mount and resync on the `storage` event; UI state (filters, open sheets) is never persisted. *My Profile → Demo Data → Reset* clears it.
+- Neon is the only store of record: the layout hydrates the stores from a database snapshot, changes are written back through a server action, and each tab pulls newer rows every 4 s (tombstones carry deletes). Nothing is kept in `localStorage`; without a database the demo runs in memory.
+
+## Authentication pages
+- **`auth-shell`** — split screen: the form column on `{colors.canvas}` (brand block top-left, footer with status dot bottom), and from `lg` a showcase panel on `{colors.sidebar}` behind a `{colors.hairline}` edge. The showcase uses only product components: the North America `dot-matrix-map` in `{colors.pipeline-na}`, a `deal-card` and two `stat-tile`s. No gradients, photos or illustrations.
+- **Type** — the page title is 24px/600, -0.5px (`auth-title`, the one size between `heading` and `display-metric`); supporting copy `{typography.body-copy}` at 80% `{colors.body}`.
+- **Controls** — auth buttons are full-width 36px pills (`button-primary` gradient or `button-secondary` fill) with a spinner while working; fields are `{components.input}` with a reveal toggle for passwords and inline `{colors.alert}` errors; form-level errors use the `tag-red` palette as a banner. Six-box code input (44px tall, 18px tabular digits) accepts paste.
+- **Flows** — sign in (Google or email + password → email code when Clerk asks for client trust / second factor), sign up (name, email, password → email code), SSO callback. Without Clerk keys the pages show a short "Sign-in isn't set up" notice and a link to the open demo.
+
+## Account surfaces
+- **`user-menu`** — the topbar user pill (20px face + name) opens a `menu` 248px wide, aligned right: a header with a 32px face, name (`{typography.body-strong}`) and email (`{typography.label}` muted), then *My Profile*, *Edit profile* and, after a separator, *Sign out* in `{colors.alert}`. Faces use the Clerk photo when present, else the DiceBear avatar.
+- **`onboarding-modal`** — the standard `{components.dialog}` / bottom sheet, but `dismissible={false}` until saved (no close button, Esc, outside click or swipe). Sections: live identity preview (52px face, name, role · team), *About you* (first/last name, read-only work email), *Your role* (free-text role with one-tap role chips, team select, region `segmented-control`), *Contact* (phone, auto-detected time zone, 280-char bio). Validation and server errors replace the "* required" note in the footer so they're always visible. The same form edits the profile later (dismissible, with Cancel).
 
 ## Known Gaps
 - **Light theme:** not designed; the system is dark-only.
@@ -947,7 +957,9 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Disabled states** are only generic (50% opacity).
 - Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
 - Company numbers are now live, so the Companies table no longer shows the reference screenshot's values (layout and styling are unchanged).
-- Sync is per browser (localStorage + tabs); multi-user, multi-device realtime needs a server.
+- Realtime is polling (≈4 s while a tab is visible), so Neon compute stays awake while tabs are open; there are no organizations/roles — every signed-in user shares one workspace.
+- Owners (`OWNERS`) are seeded to the database but the UI still reads the built-in roster.
+- Forgot-password and account settings screens are not built yet (Clerk handles them in its dashboard).
 - Pipeline sites are demo coordinates at city level; the maps are static region crops (no pan/zoom) and very close cities merge into one site (e.g. the SF Bay Area).
 - Q1 renewals ($480K) and the flat $300K rep Q1 quota are plan constants; close-date push history is seeded demo data (new pushes from the review are recorded live).
 - SDR call / email / meeting counts are roster demo data (sourced pipeline is live); FQ4 shows zeros because it hasn't started.

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import { AFTER_AUTH_URL, AUTH_ENABLED, SIGN_IN_URL, SIGN_UP_URL } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +43,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} dark h-full antialiased`}
     >
-      <body className="h-full">{children}</body>
+      <body className="h-full">
+        {AUTH_ENABLED ? (
+          <ClerkProvider signInUrl={SIGN_IN_URL} signUpUrl={SIGN_UP_URL} signInFallbackRedirectUrl={AFTER_AUTH_URL} signUpFallbackRedirectUrl={AFTER_AUTH_URL} afterSignOutUrl={SIGN_IN_URL}>
+            {children}
+          </ClerkProvider>
+        ) : (
+          children
+        )}
+      </body>
     </html>
   );
 }

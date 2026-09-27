@@ -251,14 +251,37 @@ Or try it right now at **[trythezerocrm.vercel.app](https://trythezerocrm.vercel
 | `pnpm build` | Production build |
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Run ESLint (Next.js + React Hooks rules) |
+| `pnpm db:migrate` | Apply the SQL migrations in `db/migrations` (Drizzle Kit) |
+| `pnpm db:generate` | Write a new migration after editing `db/schema.ts` |
+| `pnpm db:push` | Sync a dev database straight from the schema (interactive) |
+| `pnpm db:seed` | Fill the database with the full demo workspace (safe to re-run) |
+| `pnpm db:reset` | Wipe ZeroCRM's tables and seed fresh demo data |
+| `pnpm db:studio` | Browse the data in Drizzle Studio |
 
-> **No backend required.** ZeroCRM ships with realistic demo data, so it runs instantly. Everything you change is saved in your browser and syncs live across open tabs; **My Profile → Reset demo data** restores the original data.
+> **Runs with zero setup.** Without environment variables ZeroCRM is an open demo on built-in, in-memory data (it resets on reload). Add a database and Clerk to make it a real, multi-user app:
+
+### Database (Neon + Drizzle) and sign-in (Clerk)
+
+1. Create a free Postgres database on **[Neon](https://console.neon.tech)** and an application on **[Clerk](https://dashboard.clerk.com)** (enable *Email + password* and, optionally, *Google*).
+2. Copy the env template and fill in the three values:
+   ```bash
+   cp .env.example .env.local
+   ```
+3. Create the tables (the SQL migration is committed in `db/migrations`) and load every page's data:
+   ```bash
+   pnpm db:migrate
+   pnpm db:seed
+   ```
+   After changing `db/schema.ts`, run `pnpm db:generate` to write a new migration (or `pnpm db:push` to sync a dev database directly).
+4. `pnpm dev` — you'll land on the custom **/sign-in** page. New accounts (email or Google) get a short onboarding step whose details are saved to Neon; after that every page reads from Neon, every change is written back automatically, and other people's changes appear within a few seconds.
+
+<p align="center"><img src="./docs/screenshots/desktop-sign-in.png" alt="ZeroCRM sign-in" width="100%" /><br /><sub>Custom sign-in built on Clerk — Google, email + password, email-code verification</sub></p>
 
 ### Deploy
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/CerebralCEO/zerocrm)
 
-Or build it anywhere that runs Node: `pnpm build && pnpm start`. Every route is statically prerendered.
+Or build it anywhere that runs Node: `pnpm build && pnpm start`. Add `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to your host's environment variables to enable the database and sign-in.
 
 ---
 
@@ -271,7 +294,9 @@ Or build it anywhere that runs Node: `pnpm build && pnpm start`. Every route is 
 | UI primitives | [Radix UI](https://www.radix-ui.com) (Dialog, Dropdown Menu, Popover, Select, Slider) — fully restyled |
 | Command palette | [cmdk](https://cmdk.paco.me) |
 | Drag & drop | [dnd-kit](https://dndkit.com) |
-| State | [Zustand](https://zustand.docs.pmnd.rs) |
+| State | [Zustand](https://zustand.docs.pmnd.rs) stores, hydrated from the database |
+| Database | [Neon](https://neon.tech) serverless Postgres · [Drizzle ORM](https://orm.drizzle.team) + Drizzle Kit |
+| Auth | [Clerk](https://clerk.com) with a fully custom sign-in / sign-up UI (`proxy.ts` protects every route) |
 | Icons | [Lucide](https://lucide.dev) · brand logos from [Simple Icons](https://simpleicons.org) |
 | Avatars | [DiceBear](https://www.dicebear.com) — *Avataaars* style, generated locally |
 | Font | [Geist](https://vercel.com/font) via `next/font` |
@@ -327,7 +352,9 @@ zerocrm/
 │   ├── store.ts                  # Companies store (selection, filters, sort, overlays, notifications)
 │   ├── company-metrics.ts        # Company numbers derived from deals + activity
 │   ├── events.ts · wire.ts       # Event bus → activity feed, deal timelines, notifications
-│   ├── persist.ts                # localStorage persistence + cross-tab sync
+│   ├── db-sync.ts                # Snapshot hydration, write-through and realtime pull (Neon)
+│   ├── profile-store.ts          # Signed-in user's profile + onboarding state
+│   └── auth.ts · current-user.ts # Clerk switches and the signed-in user
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
 ```
@@ -338,7 +365,9 @@ zerocrm/
 - **Forecast, Q1 plan, Slipping Deals, Teams, SDRs, Pipelines, Invoices** — all read the deals store, so a value, stage or close-date change on the board moves every chart at once. Pushing a close date from the deal sheet is recorded as a slip.
 - **Contacts** — last touch and "going cold" follow the activity log.
 - **Event bus** ([`lib/events.ts`](./lib/events.ts)) — stores announce what happened (deal moved or won, deal updated, invoice drafted/sent/paid, company or contact added); [`lib/wire.ts`](./lib/wire.ts) turns events into activity-feed entries, deal-timeline items and notifications, without the stores importing each other.
-- **Persistence & sync** ([`lib/persist.ts`](./lib/persist.ts), [`StoreSync`](./components/shell/store-sync.tsx)) — each store saves only its data to `localStorage`, rehydrates after the first render (so server HTML still matches), and reloads when another tab saves: every open tab shows the same numbers in real time.
+- **Neon is the only source of truth** ([`db/`](./db), [`lib/db-sync.ts`](./lib/db-sync.ts)) — the CRM layout loads a snapshot of every table and seeds the stores before the first render (server and client agree). Store changes are diffed by record and written back in batches through one server action (`app/actions/sync.ts`, auth-checked, retried with backoff). Nothing is stored in the browser.
+- **Realtime over Neon** (`app/actions/pull.ts`) — every open tab asks for rows whose `updated_at` is newer than its last pull (every 4 s while visible, instantly on focus) and merges them in, without overwriting its own unsaved edits. Deletions travel as `tombstones`. Other tabs, users and devices converge within seconds.
+- **User profiles** — after sign-up (email or Google) a required onboarding modal collects name, role, team, region, phone, time zone and a short bio into `user_profiles` (keyed by the Clerk user id, validated server-side); the topbar menu, My Profile and activity attribution use it.
 - **Sidebar badges** are live counts (companies, deals at risk, contacts, overdue invoices, slipped deals).
 
 **Swapping in a real backend.** The stores are the only writers, so a backend slots in behind them: load the seeds from your API instead of `lib/*.ts`, send each store action (`moveDeal`, `updateDeal`, `addActivity`, `markPaid`…) to a Route Handler or Server Action, and replace the `storage` event sync with your realtime channel (e.g. Postgres changes over WebSockets). Derived numbers need no changes.
@@ -382,7 +411,11 @@ Every colour and measurement was sampled from the reference design and lives as 
 
 - [x] Connected data model — every page derived from one source of truth, events feed and live badges
 - [x] Browser persistence with live cross-tab sync
-- [ ] Server persistence (PostgreSQL + Drizzle) behind Server Actions, multi-user realtime
+- [x] Neon Postgres + Drizzle with seed data and write-through sync
+- [x] Clerk authentication with a custom sign-in / sign-up, onboarding profile and account menu
+- [x] Realtime across tabs, users and devices over Neon (change polling + tombstones)
+- [ ] Organizations (multi-workspace) and role-based access
+- [ ] Push-based realtime (Postgres logical replication / WebSockets) instead of polling
 - [ ] Authentication and team workspaces
 - [x] Deals board (Kanban) with drag & drop
 - [x] Forecast with live quota attainment

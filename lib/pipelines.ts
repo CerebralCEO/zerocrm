@@ -1,6 +1,6 @@
 import type { Deal, StageId } from "./deals";
 import { STAGES } from "./deals";
-import { TODAY } from "./deals-store";
+import { TODAY } from "./clock";
 import { PERIODS, Q1_FY28, type Period } from "./forecast";
 import { REGION_MAPS, type RegionMap } from "./pipeline-maps";
 
