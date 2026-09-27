@@ -1,5 +1,6 @@
 "use client";
 
+import { useCompanies } from "@/lib/use-companies";
 import { useCrm } from "@/lib/store";
 import { useDeals } from "@/lib/deals-store";
 import { stageById, STAGES } from "@/lib/deals";
@@ -14,7 +15,7 @@ import type { RepMetrics } from "./use-team-data";
 
 /** Accounts owned by the team with open pipeline and furthest-along stage. */
 export function AccountsCoverage({ reps, title }: { reps: RepMetrics[]; title: string }) {
-  const companies = useCrm((s) => s.companies);
+  const companies = useCompanies();
   const openCompany = useCrm((s) => s.openDetail);
   const deals = useDeals((s) => s.deals);
   const owners = new Set(reps.map((r) => r.member.ownerId));

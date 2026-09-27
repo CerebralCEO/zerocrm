@@ -252,7 +252,7 @@ Or try it right now at **[trythezerocrm.vercel.app](https://trythezerocrm.vercel
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Run ESLint (Next.js + React Hooks rules) |
 
-> **No backend required.** ZeroCRM ships with realistic mock data in [`lib/data.ts`](./lib/data.ts), so it runs instantly. State lives in memory and resets on reload — see the [Roadmap](#-roadmap) for persistence.
+> **No backend required.** ZeroCRM ships with realistic demo data, so it runs instantly. Everything you change is saved in your browser and syncs live across open tabs; **My Profile → Reset demo data** restores the original data.
 
 ### Deploy
 
@@ -324,14 +324,24 @@ zerocrm/
 │   ├── contacts.ts               # Contacts, buying roles (fictional, reserved emails/phones)
 │   ├── sequences.ts              # Sequences, steps, enrollments, template rendering
 │   ├── teams.ts                  # Team rosters (territories, quotas) over existing owners
-│   ├── store.ts                  # Zustand store (selection, filters, sort, overlays)
+│   ├── store.ts                  # Companies store (selection, filters, sort, overlays, notifications)
+│   ├── company-metrics.ts        # Company numbers derived from deals + activity
+│   ├── events.ts · wire.ts       # Event bus → activity feed, deal timelines, notifications
+│   ├── persist.ts                # localStorage persistence + cross-tab sync
 │   └── utils.ts                  # cn(), number & date formatting
 └── docs/screenshots/             # Images used in this README
 ```
 
-**Data flow.** Components read from a single Zustand store ([`lib/store.ts`](./lib/store.ts)). The visible list is derived in [`useVisibleCompanies`](./components/companies/use-visible-companies.ts) — filter → sort — so the table, footer totals, CSV export and counts always agree.
+**Data flow — one source of truth.** Deals, activities, contacts, invoices and companies each live in one Zustand store; every number on every page is *derived* from them, never copied:
 
-**Swapping in a real backend.** Replace the `COMPANIES` seed in `lib/data.ts` with a fetch (Server Component, Route Handler or Server Action) and point `addCompany` / `updateCompany` at your API. The `Company` type is the contract.
+- **Companies** — open deals, pipeline value, win probability, pipeline health, touches, activity trend and last interaction are computed from the deals board and the activity log ([`lib/company-metrics.ts`](./lib/company-metrics.ts)). A new company opens its pipeline as real deals.
+- **Forecast, Q1 plan, Slipping Deals, Teams, SDRs, Pipelines, Invoices** — all read the deals store, so a value, stage or close-date change on the board moves every chart at once. Pushing a close date from the deal sheet is recorded as a slip.
+- **Contacts** — last touch and "going cold" follow the activity log.
+- **Event bus** ([`lib/events.ts`](./lib/events.ts)) — stores announce what happened (deal moved or won, deal updated, invoice drafted/sent/paid, company or contact added); [`lib/wire.ts`](./lib/wire.ts) turns events into activity-feed entries, deal-timeline items and notifications, without the stores importing each other.
+- **Persistence & sync** ([`lib/persist.ts`](./lib/persist.ts), [`StoreSync`](./components/shell/store-sync.tsx)) — each store saves only its data to `localStorage`, rehydrates after the first render (so server HTML still matches), and reloads when another tab saves: every open tab shows the same numbers in real time.
+- **Sidebar badges** are live counts (companies, deals at risk, contacts, overdue invoices, slipped deals).
+
+**Swapping in a real backend.** The stores are the only writers, so a backend slots in behind them: load the seeds from your API instead of `lib/*.ts`, send each store action (`moveDeal`, `updateDeal`, `addActivity`, `markPaid`…) to a Route Handler or Server Action, and replace the `storage` event sync with your realtime channel (e.g. Postgres changes over WebSockets). Derived numbers need no changes.
 
 ---
 
@@ -370,7 +380,9 @@ Every colour and measurement was sampled from the reference design and lives as 
 
 ## 🗺 Roadmap
 
-- [ ] Persistence (PostgreSQL + Drizzle) behind Server Actions
+- [x] Connected data model — every page derived from one source of truth, events feed and live badges
+- [x] Browser persistence with live cross-tab sync
+- [ ] Server persistence (PostgreSQL + Drizzle) behind Server Actions, multi-user realtime
 - [ ] Authentication and team workspaces
 - [x] Deals board (Kanban) with drag & drop
 - [x] Forecast with live quota attainment

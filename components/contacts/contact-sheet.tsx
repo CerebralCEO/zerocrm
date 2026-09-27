@@ -1,5 +1,6 @@
 "use client";
 
+import { useLiveContact } from "@/lib/use-contacts";
 import { Building2, Mail, MapPin, NotebookPen, Phone, UserRound, type LucideIcon } from "lucide-react";
 import { useContacts } from "@/lib/contacts-store";
 import { useActivities } from "@/lib/activities-store";
@@ -56,7 +57,7 @@ function InfoRow({ icon: Icon, label, children }: { icon: LucideIcon; label: str
 
 export function ContactSheet() {
   const openId = useContacts((s) => s.openId);
-  const contact = useContacts((s) => s.contacts.find((c) => c.id === s.openId));
+  const contact = useLiveContact(openId);
   const openContact = useContacts((s) => s.openContact);
   const company = useCrm((s) => (contact ? s.companies.find((c) => c.id === contact.companyId) : undefined));
   const openCompany = useCrm((s) => s.openDetail);

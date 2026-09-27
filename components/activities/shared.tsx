@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { CircleCheck, FileText, Mail, Phone, Video, type LucideIcon } from "lucide-react";
+import { CircleCheck, FileText, Mail, Phone, Video, Zap, type LucideIcon } from "lucide-react";
 import { useActivities } from "@/lib/activities-store";
 import { TODAY } from "@/lib/deals-store";
 import { daysBetween, dateOf, type ActivityKind } from "@/lib/activities";
@@ -16,8 +16,8 @@ export const KIND_ICON: Record<ActivityKind, LucideIcon> = {
 };
 
 /** Neutral icon tile for an activity kind ({components.activity-icon}). */
-export function ActivityIcon({ kind, size = 32, className }: { kind: ActivityKind; size?: number; className?: string }) {
-  const Icon = KIND_ICON[kind];
+export function ActivityIcon({ kind, size = 32, className, system }: { kind: ActivityKind; size?: number; className?: string; system?: boolean }) {
+  const Icon = system ? Zap : KIND_ICON[kind];
   return (
     <span
       className={cn("flex shrink-0 items-center justify-center rounded-lg border border-line-card bg-muted-surface", className)}
@@ -28,20 +28,21 @@ export function ActivityIcon({ kind, size = 32, className }: { kind: ActivityKin
   );
 }
 
-/** Logged (done) activities inside the selected range and filters, newest first. */
+/** Logged (done) activities inside the selected range and filters, newest first — plus system events when no type filter is set. */
 export function useFeed() {
-  const activities = useActivities((s) => s.activities);
+  const logged = useActivities((s) => s.activities);
+  const events = useActivities((s) => s.events);
   const kind = useActivities((s) => s.kindFilter);
   const owner = useActivities((s) => s.ownerFilter);
   const range = useActivities((s) => s.range);
   return useMemo(
     () =>
-      activities
+      (kind ? logged : [...logged, ...events])
         .filter((a) => a.done && a.at.slice(0, 10) <= TODAY)
         .filter((a) => daysBetween(dateOf(a.at), TODAY) < range)
         .filter((a) => (!kind || a.kind === kind) && (!owner || a.ownerId === owner))
         .sort((a, b) => b.at.localeCompare(a.at)),
-    [activities, kind, owner, range],
+    [logged, events, kind, owner, range],
   );
 }
 

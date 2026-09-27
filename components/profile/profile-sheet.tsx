@@ -1,6 +1,9 @@
 "use client";
 
-import { Mail, Phone, UserRound } from "lucide-react";
+import { useCompanies } from "@/lib/use-companies";
+import { useState } from "react";
+import { Mail, Phone, RotateCcw, UserRound } from "lucide-react";
+import { clearPersisted } from "@/lib/persist";
 import { useCrm, sortCompanies } from "@/lib/store";
 import { CURRENT_USER } from "@/lib/data";
 import { formatNumber, formatCurrency } from "@/lib/utils";
@@ -21,7 +24,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 export function ProfileSheet() {
   const open = useCrm((s) => s.profileOpen);
   const setOpen = useCrm((s) => s.setProfileOpen);
-  const companies = useCrm((s) => s.companies);
+  const companies = useCompanies();
   const openDetail = useCrm((s) => s.openDetail);
   const setOwnerFilter = useCrm((s) => s.setOwnerFilter);
   const setStageFilter = useCrm((s) => s.setStageFilter);
@@ -120,6 +123,34 @@ export function ProfileSheet() {
           ))}
         </div>
       </section>
+      <DemoData />
     </Sheet>
+  );
+}
+
+/** Everything you change is saved in this browser; this puts the demo back to its seed. */
+function DemoData() {
+  const [confirm, setConfirm] = useState(false);
+  return (
+    <section className="border-t border-line-strong px-5 pt-[21px] pb-[22px]">
+      <SectionLabel>Demo Data</SectionLabel>
+      <p className="mt-[12px] text-[12px] leading-[16px] text-fg-soft/80">
+        Your changes are saved in this browser and sync across open tabs. Resetting restores the original demo companies, deals, activity and invoices.
+      </p>
+      <div className="mt-[14px] flex items-center gap-2">
+        <Button
+          onClick={() => {
+            if (!confirm) return setConfirm(true);
+            clearPersisted();
+            window.location.reload();
+          }}
+          className={confirm ? "border-danger-dot/60 text-danger-dot" : undefined}
+        >
+          <RotateCcw className="size-[12px]" strokeWidth={2} />
+          {confirm ? "Click again to reset" : "Reset demo data"}
+        </Button>
+        {confirm && <Button onClick={() => setConfirm(false)}>Cancel</Button>}
+      </div>
+    </section>
   );
 }

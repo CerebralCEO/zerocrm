@@ -63,20 +63,25 @@ function StageTrack({ stage }: { stage: StageId }) {
   );
 }
 
-type Draft = Pick<Deal, "stage" | "probability" | "nextStep">;
+type Draft = Pick<Deal, "stage" | "probability" | "nextStep" | "value" | "closeDate">;
 
 function DealBody({ deal, draft, setDraft }: { deal: Deal; draft: Draft; setDraft: (d: Draft) => void }) {
   const company = useCrm((s) => s.companies.find((c) => c.id === deal.companyId));
   const allActivities = useActivities((s) => s.activities);
+  const events = useActivities((s) => s.events);
   // Logged activity for this deal (from the Activities page), newest first; seed notes as fallback.
-  const logged = allActivities
+  const logged = [...allActivities, ...events]
     .filter((a) => a.dealId === deal.id && a.done)
     .sort((a, b) => b.at.localeCompare(a.at))
     .slice(0, 4)
-    .map((a) => ({ kind: a.kind, text: a.body ? `${a.title} — ${a.body}` : a.title, time: `${dayLabel(dateOf(a.at))} · ${formatTime(a.at)}` }));
+    .map((a) => ({
+      kind: a.kind,
+      text: a.system ? `${a.actor ?? "Someone"} ${a.title}${a.body ? ` — ${a.body}` : ""}` : a.body ? `${a.title} — ${a.body}` : a.title,
+      time: `${dayLabel(dateOf(a.at))} · ${formatTime(a.at)}`,
+    }));
   const timeline = logged.length ? logged : deal.activity;
   const owner = ownerById(deal.ownerId);
-  const weighted = Math.round((deal.value * draft.probability) / 100);
+  const weighted = Math.round((draft.value * draft.probability) / 100);
   const overdue = isOverdue({ ...deal, stage: draft.stage });
 
   return (
@@ -96,13 +101,35 @@ function DealBody({ deal, draft, setDraft }: { deal: Deal; draft: Draft; setDraf
         <SectionLabel>Deal Summary</SectionLabel>
         <div className="mt-[15px] text-[28px] font-semibold leading-none tracking-[-0.5px] text-fg tabular-nums">
           <span className="mr-[4px] text-[#7f7f7f]">$</span>
-          {formatNumber(deal.value)}
+          {formatNumber(draft.value)}
         </div>
         <div className="mt-[6px] text-[12px] leading-none text-fg-soft/80">
           ${formatNumber(weighted)} weighted at {draft.probability}% win probability
         </div>
         <SegmentedMeter value={draft.probability} segments={64} variant="bar" className="mt-[14px]" />
-        <div className="mt-[14px] grid grid-cols-2 gap-2">
+        <div className="mt-[16px] grid grid-cols-2 gap-3 sm:gap-4">
+          <div>
+            <Label htmlFor="deal-value">Deal value ($)</Label>
+            <Input
+              id="deal-value"
+              inputMode="numeric"
+              className="tabular-nums"
+              value={draft.value}
+              onChange={(e) => setDraft({ ...draft, value: Number(e.target.value.replace(/[^\d]/g, "")) || 0 })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="deal-close">Close date</Label>
+            <Input
+              id="deal-close"
+              type="date"
+              className="[color-scheme:dark]"
+              value={draft.closeDate}
+              onChange={(e) => e.target.value && setDraft({ ...draft, closeDate: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="mt-[12px] grid grid-cols-2 gap-2">
           <Tile icon={CalendarClock} label="Close date">
             <span className={cn(overdue && "text-danger-dot")}>
               {overdue ? `Overdue · ${formatShortDate(deal.closeDate)}` : formatShortDate(deal.closeDate)}
@@ -197,7 +224,9 @@ export function DealDetailSheet() {
   const hasInvoice = useInvoices((s) => !!deal && s.invoices.some((i) => i.dealId === deal.id));
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
 
-  const draft = deal ? drafts[deal.id] ?? { stage: deal.stage, probability: deal.probability, nextStep: deal.nextStep } : null;
+  const draft = deal
+    ? (drafts[deal.id] ?? { stage: deal.stage, probability: deal.probability, nextStep: deal.nextStep, value: deal.value, closeDate: deal.closeDate })
+    : null;
   const close = () => {
     setDrafts({});
     openDeal(null);
@@ -244,7 +273,12 @@ export function DealDetailSheet() {
               onClick={() => {
                 if (deal && draft) {
                   if (draft.stage !== deal.stage) moveDeal(deal.id, draft.stage);
-                  updateDeal(deal.id, { probability: draft.probability, nextStep: draft.nextStep.trim() || deal.nextStep });
+                  updateDeal(deal.id, {
+                    probability: draft.probability,
+                    nextStep: draft.nextStep.trim() || deal.nextStep,
+                    value: draft.value > 0 ? draft.value : deal.value,
+                    closeDate: draft.closeDate,
+                  });
                 }
                 close();
               }}

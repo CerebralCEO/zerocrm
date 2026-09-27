@@ -1,5 +1,6 @@
 "use client";
 
+import { useCompany } from "@/lib/use-companies";
 import { useState } from "react";
 import { Building2, Calendar, ChevronDown, Clock, Mail, Phone, PhoneCall, Sparkles, Star } from "lucide-react";
 import { useCrm } from "@/lib/store";
@@ -195,7 +196,7 @@ function DetailBody({ company, ratings, setRating }: {
 
 export function CompanyDetailSheet() {
   const detailId = useCrm((s) => s.detailId);
-  const company = useCrm((s) => s.companies.find((c) => c.id === s.detailId));
+  const company = useCompany(detailId);
   const openDetail = useCrm((s) => s.openDetail);
   const updateCompany = useCrm((s) => s.updateCompany);
   const [ratings, setRatings] = useState<Record<string, number[]>>({});

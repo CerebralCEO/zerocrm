@@ -1,6 +1,8 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { persistOptions, track } from "./persist";
 import { TEAMS, type SdrMember, type Team, type TeamId, type TeamMember } from "./teams";
 import type { PeriodId } from "./forecast";
 
@@ -21,27 +23,34 @@ type TeamsState = {
   addSdr: (teamId: TeamId, member: SdrMember) => void;
 };
 
-export const useTeams = create<TeamsState>((set) => ({
-  teams: TEAMS,
-  period: "fq3",
-  sortBy: "attainment",
-  openRep: null,
-  addOpen: false,
+export const useTeams = track(
+  create<TeamsState>()(
+    persist(
+      (set) => ({
+        teams: TEAMS,
+        period: "fq3",
+        sortBy: "attainment",
+        openRep: null,
+        addOpen: false,
 
-  setPeriod: (period) => set({ period }),
-  setSortBy: (sortBy) => set({ sortBy }),
-  openRepSheet: (openRep) => set({ openRep }),
-  setAddOpen: (addOpen) => set({ addOpen }),
-  addMember: (teamId, member) =>
-    set((s) => ({
-      teams: s.teams.map((t) =>
-        t.id === teamId && t.kind === "ae" && !t.members.some((m) => m.ownerId === member.ownerId)
-          ? { ...t, members: [...t.members, member] }
-          : t,
-      ),
-    })),
-  addSdr: (teamId, member) =>
-    set((s) => ({
-      teams: s.teams.map((t) => (t.id === teamId && t.kind === "sdr" ? { ...t, members: [...t.members, member] } : t)),
-    })),
-}));
+        setPeriod: (period) => set({ period }),
+        setSortBy: (sortBy) => set({ sortBy }),
+        openRepSheet: (openRep) => set({ openRep }),
+        setAddOpen: (addOpen) => set({ addOpen }),
+        addMember: (teamId, member) =>
+          set((s) => ({
+            teams: s.teams.map((t) =>
+              t.id === teamId && t.kind === "ae" && !t.members.some((m) => m.ownerId === member.ownerId)
+                ? { ...t, members: [...t.members, member] }
+                : t,
+            ),
+          })),
+        addSdr: (teamId, member) =>
+          set((s) => ({
+            teams: s.teams.map((t) => (t.id === teamId && t.kind === "sdr" ? { ...t, members: [...t.members, member] } : t)),
+          })),
+      }),
+      persistOptions<TeamsState, "teams">("teams", ["teams"]),
+    ),
+  ),
+);

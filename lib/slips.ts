@@ -6,15 +6,17 @@ import { fiscalQuarter } from "./forecast";
  * Close-date history. Every time a deal's close date moves later, a push is
  * recorded; the chain always ends at the deal's current close date.
  */
-export type SlipReason = "Budget freeze" | "Procurement" | "Security review" | "Legal review" | "Champion left" | "Pricing";
+export type SlipReason = "Budget freeze" | "Procurement" | "Security review" | "Legal review" | "Champion left" | "Pricing" | "Rescheduled";
 
-export const SLIP_REASONS: { id: SlipReason; tone: "red" | "orange" | "yellow" | "blue" | "purple" | "teal" }[] = [
+export const SLIP_REASONS: { id: SlipReason; tone: "red" | "orange" | "yellow" | "blue" | "purple" | "teal" | "neutral" }[] = [
   { id: "Budget freeze", tone: "red" },
   { id: "Procurement", tone: "orange" },
   { id: "Security review", tone: "blue" },
   { id: "Legal review", tone: "purple" },
   { id: "Champion left", tone: "yellow" },
   { id: "Pricing", tone: "teal" },
+  // Close date moved later from the deal sheet, without a stated reason.
+  { id: "Rescheduled", tone: "neutral" },
 ];
 export const reasonTone = (r: SlipReason) => SLIP_REASONS.find((x) => x.id === r)!.tone;
 

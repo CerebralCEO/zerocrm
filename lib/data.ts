@@ -62,7 +62,8 @@ export type Company = {
   pipelineValue: number;
   winProbability: number;
   activity: number[];
-  lastInteraction: { date: string; type: InteractionType };
+  /** Deal touches use interaction types; logged activity uses its kind. */
+  lastInteraction: { date: string; type: InteractionType | "Call" | "Email" | "Meeting" | "Note" | "Task" };
   health: { discovery: number; evaluation: number; procurement: number };
   activityScore: number;
   activityNote: string;

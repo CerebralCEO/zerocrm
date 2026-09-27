@@ -4,6 +4,7 @@ import { ProfileSheet } from "@/components/profile/profile-sheet";
 import { SearchCommand } from "@/components/companies/search-command";
 import { CompanyDetailSheet } from "@/components/companies/company-detail-sheet";
 import { InvoiceStudio } from "@/components/invoices/invoice-studio";
+import { StoreSync } from "@/components/shell/store-sync";
 
 export default function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,6 +19,7 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
       <SearchCommand />
       <CompanyDetailSheet />
       <InvoiceStudio />
+      <StoreSync />
     </div>
   );
 }

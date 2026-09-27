@@ -1,11 +1,12 @@
 "use client";
 
+import { useCompanies } from "@/lib/use-companies";
 import { useMemo } from "react";
 import { useCrm, sortCompanies } from "@/lib/store";
 
 /** Companies after the owner / stage filters and the current sort. */
 export function useVisibleCompanies() {
-  const companies = useCrm((s) => s.companies);
+  const companies = useCompanies();
   const ownerFilter = useCrm((s) => s.ownerFilter);
   const stageFilter = useCrm((s) => s.stageFilter);
   const sortBy = useCrm((s) => s.sortBy);

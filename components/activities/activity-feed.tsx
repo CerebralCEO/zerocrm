@@ -28,7 +28,7 @@ function FeedItem({ a }: { a: Activity }) {
   const openDeal = useDeals((s) => s.openDeal);
   const isNew = useActivities((s) => s.lastAddedId === a.id);
   const owner = ownerById(a.ownerId);
-  const body = a.kind === "task" ? a.title : a.body;
+  const body = a.kind === "task" && !a.system ? a.title : a.body;
 
   return (
     <li
@@ -39,19 +39,37 @@ function FeedItem({ a }: { a: Activity }) {
         isNew && "animate-row-in",
       )}
     >
-      <ActivityIcon kind={a.kind} />
+      <ActivityIcon kind={a.kind} system={a.system} />
       <div className="min-w-0 flex-1 pt-[2px]">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-[14px] leading-[18px] text-fg-soft">
-            <span className="font-semibold text-fg">{owner.name}</span> {VERB[a.kind]}{" "}
-            <button
-              type="button"
-              onClick={() => openCompany(a.companyId)}
-              className="no-press font-medium text-fg underline-offset-[3px] hover:underline"
-            >
-              {company?.name ?? a.companyId}
-            </button>
-          </p>
+          {a.system ? (
+            <p className="text-[14px] leading-[18px] text-fg-soft">
+              <span className="font-semibold text-fg">{a.actor ?? owner.name}</span> {a.title}
+              {a.dealId && (
+                <>
+                  {" · "}
+                  <button
+                    type="button"
+                    onClick={() => openCompany(a.companyId)}
+                    className="no-press font-medium text-fg underline-offset-[3px] hover:underline"
+                  >
+                    {company?.name ?? a.companyId}
+                  </button>
+                </>
+              )}
+            </p>
+          ) : (
+            <p className="text-[14px] leading-[18px] text-fg-soft">
+              <span className="font-semibold text-fg">{owner.name}</span> {VERB[a.kind]}{" "}
+              <button
+                type="button"
+                onClick={() => openCompany(a.companyId)}
+                className="no-press font-medium text-fg underline-offset-[3px] hover:underline"
+              >
+                {company?.name ?? a.companyId}
+              </button>
+            </p>
+          )}
           <span className="shrink-0 pt-[2px] text-[12px] leading-none text-fg-muted tabular-nums">{formatTime(a.at)}</span>
         </div>
 
@@ -96,7 +114,7 @@ export function ActivityFeed() {
       <header className="flex flex-col gap-[7px]">
         <h2 className="text-[14px] font-medium leading-none text-fg">Activity feed</h2>
         <p className="text-[12px] leading-none text-fg-muted">
-          <span className="text-fg-soft tabular-nums">{feed.length}</span> activities logged by the team
+          <span className="text-fg-soft tabular-nums">{feed.length}</span> activities and pipeline updates
         </p>
       </header>
 

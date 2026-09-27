@@ -1,6 +1,8 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { persistOptions, track } from "./persist";
 import { SEQUENCES, type Sequence, type SequenceStatus, type Step } from "./sequences";
 
 export type StatusFilter = SequenceStatus | "all";
@@ -33,55 +35,62 @@ type SequencesState = {
 
 const patch = (list: Sequence[], id: string, fn: (s: Sequence) => Sequence) => list.map((s) => (s.id === id ? fn(s) : s));
 
-export const useSequences = create<SequencesState>((set) => ({
-  sequences: SEQUENCES,
-  selectedId: SEQUENCES[0].id,
-  detailOpen: false,
-  statusFilter: "all",
-  ownerFilter: null,
-  editor: null,
-  newOpen: false,
-  enrollOpen: false,
+export const useSequences = track(
+  create<SequencesState>()(
+    persist(
+      (set) => ({
+        sequences: SEQUENCES,
+        selectedId: SEQUENCES[0].id,
+        detailOpen: false,
+        statusFilter: "all",
+        ownerFilter: null,
+        editor: null,
+        newOpen: false,
+        enrollOpen: false,
 
-  select: (selectedId) => set({ selectedId, detailOpen: true }),
-  closeDetail: () => set({ detailOpen: false }),
-  setStatusFilter: (statusFilter) => set({ statusFilter }),
-  setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
-  setStatus: (id, status) => set((s) => ({ sequences: patch(s.sequences, id, (q) => ({ ...q, status })) })),
-  openEditor: (sequenceId, stepId) => set({ editor: { sequenceId, stepId } }),
-  closeEditor: () => set({ editor: null }),
-  saveStep: (sequenceId, step) =>
-    set((s) => ({
-      sequences: patch(s.sequences, sequenceId, (q) =>
-        step.id
-          ? { ...q, steps: q.steps.map((x) => (x.id === step.id ? { ...x, ...step, id: x.id } : x)) }
-          : { ...q, steps: [...q.steps, { ...step, id: `s-new-${Date.now().toString(36)}`, stats: { sent: 0, opened: 0, replied: 0 } }] },
-      ),
-    })),
-  deleteStep: (sequenceId, stepId) =>
-    set((s) => ({
-      sequences: patch(s.sequences, sequenceId, (q) => ({
-        ...q,
-        steps: q.steps.filter((x) => x.id !== stepId).map((x, i) => (i === 0 ? { ...x, delayDays: 0 } : x)),
-      })),
-    })),
-  setNewOpen: (newOpen) => set({ newOpen }),
-  addSequence: (seq) =>
-    set((s) => {
-      const id = `seq-new-${s.sequences.length}`;
-      return { sequences: [{ ...seq, id }, ...s.sequences], selectedId: id, detailOpen: true };
-    }),
-  setEnrollOpen: (enrollOpen) => set({ enrollOpen }),
-  enroll: (sequenceId, contactIds) =>
-    set((s) => ({
-      sequences: patch(s.sequences, sequenceId, (q) => ({
-        ...q,
-        enrollments: [
-          ...q.enrollments,
-          ...contactIds
-            .filter((id) => !q.enrollments.some((e) => e.contactId === id))
-            .map((contactId) => ({ contactId, step: 0, state: "active" as const })),
-        ],
-      })),
-    })),
-}));
+        select: (selectedId) => set({ selectedId, detailOpen: true }),
+        closeDetail: () => set({ detailOpen: false }),
+        setStatusFilter: (statusFilter) => set({ statusFilter }),
+        setOwnerFilter: (ownerFilter) => set({ ownerFilter }),
+        setStatus: (id, status) => set((s) => ({ sequences: patch(s.sequences, id, (q) => ({ ...q, status })) })),
+        openEditor: (sequenceId, stepId) => set({ editor: { sequenceId, stepId } }),
+        closeEditor: () => set({ editor: null }),
+        saveStep: (sequenceId, step) =>
+          set((s) => ({
+            sequences: patch(s.sequences, sequenceId, (q) =>
+              step.id
+                ? { ...q, steps: q.steps.map((x) => (x.id === step.id ? { ...x, ...step, id: x.id } : x)) }
+                : { ...q, steps: [...q.steps, { ...step, id: `s-new-${Date.now().toString(36)}`, stats: { sent: 0, opened: 0, replied: 0 } }] },
+            ),
+          })),
+        deleteStep: (sequenceId, stepId) =>
+          set((s) => ({
+            sequences: patch(s.sequences, sequenceId, (q) => ({
+              ...q,
+              steps: q.steps.filter((x) => x.id !== stepId).map((x, i) => (i === 0 ? { ...x, delayDays: 0 } : x)),
+            })),
+          })),
+        setNewOpen: (newOpen) => set({ newOpen }),
+        addSequence: (seq) =>
+          set((s) => {
+            const id = `seq-new-${s.sequences.length}`;
+            return { sequences: [{ ...seq, id }, ...s.sequences], selectedId: id, detailOpen: true };
+          }),
+        setEnrollOpen: (enrollOpen) => set({ enrollOpen }),
+        enroll: (sequenceId, contactIds) =>
+          set((s) => ({
+            sequences: patch(s.sequences, sequenceId, (q) => ({
+              ...q,
+              enrollments: [
+                ...q.enrollments,
+                ...contactIds
+                  .filter((id) => !q.enrollments.some((e) => e.contactId === id))
+                  .map((contactId) => ({ contactId, step: 0, state: "active" as const })),
+              ],
+            })),
+          })),
+      }),
+      persistOptions<SequencesState, "sequences">("sequences", ["sequences"]),
+    ),
+  ),
+);

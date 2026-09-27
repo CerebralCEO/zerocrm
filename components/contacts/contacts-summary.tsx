@@ -1,13 +1,13 @@
 "use client";
 
+import { useLiveContacts } from "@/lib/use-contacts";
 import { Heart, Snowflake, Trophy, Users } from "lucide-react";
-import { useContacts } from "@/lib/contacts-store";
 import { SegmentedMeter } from "@/components/primitives/meter";
 import { KpiCell, KpiStrip } from "@/components/ui/kpi-strip";
 import { isCold } from "./shared";
 
 export function ContactsSummary() {
-  const contacts = useContacts((s) => s.contacts);
+  const contacts = useLiveContacts();
   const champions = contacts.filter((c) => c.personas.includes("Champion"));
   const accounts = new Set(champions.map((c) => c.companyId)).size;
   const warm = contacts.filter((c) => c.strength >= 70).length;

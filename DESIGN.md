@@ -934,12 +934,20 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 6. When emphasis is needed, reach for weight (450 → 500 → 600) or `{colors.ink}` before adding colour or borders.
 7. When an extension pattern gets built, move it from "derived" into its category with real measurements.
 
+## Data Model (how pages stay consistent)
+- Numbers are **derived, never stored**: company metrics come from deals + activity (`lib/company-metrics.ts`), contacts' last touch from activity, and every report from the deals store. New UI must read these hooks (`useCompanies`, `useLiveContacts`, the page data hooks) rather than the raw seeds.
+- Stores never import each other to report changes; they `emit()` a `CrmEvent` and `lib/wire.ts` records it. System events are kept apart from logged activity (`events` vs `activities`) so rep activity counts stay honest.
+- **`feed-event`** — system entries in the activity feed and deal timeline: the `activity-icon` tile with a `Zap` glyph, "{actor} {what happened} · {company}" in `{typography.body-copy}`, detail line in `{typography.label}`. Wins, payments and new records also raise a notification.
+- Domain stores persist to `localStorage` (`zerocrm:v1:*`), rehydrate after mount and resync on the `storage` event; UI state (filters, open sheets) is never persisted. *My Profile → Demo Data → Reset* clears it.
+
 ## Known Gaps
 - **Light theme:** not designed; the system is dark-only.
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
 - Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
+- Company numbers are now live, so the Companies table no longer shows the reference screenshot's values (layout and styling are unchanged).
+- Sync is per browser (localStorage + tabs); multi-user, multi-device realtime needs a server.
 - Pipeline sites are demo coordinates at city level; the maps are static region crops (no pan/zoom) and very close cities merge into one site (e.g. the SF Bay Area).
 - Q1 renewals ($480K) and the flat $300K rep Q1 quota are plan constants; close-date push history is seeded demo data (new pushes from the review are recorded live).
 - SDR call / email / meeting counts are roster demo data (sourced pipeline is live); FQ4 shows zeros because it hasn't started.

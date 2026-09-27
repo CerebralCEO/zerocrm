@@ -27,6 +27,10 @@ export type Activity = {
   done: boolean;
   /** Planned ahead (agenda item) rather than logged after the fact. */
   scheduled?: boolean;
+  /** Recorded by the app (stage move, payment…) — shown in feeds, never counted as rep activity. */
+  system?: boolean;
+  /** Who made a system change (the signed-in user). */
+  actor?: string;
 };
 
 /** "Now" for the demo data — later items today are still upcoming. */

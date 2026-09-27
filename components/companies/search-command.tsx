@@ -1,5 +1,6 @@
 "use client";
 
+import { useCompanies } from "@/lib/use-companies";
 import { Command } from "cmdk";
 import { Dialog } from "radix-ui";
 import { ArrowDown, ArrowUp, Calendar, CornerDownLeft, Search } from "lucide-react";
@@ -29,7 +30,7 @@ function Kbd({ children }: { children: React.ReactNode }) {
 export function SearchCommand() {
   const open = useCrm((s) => s.searchOpen);
   const setOpen = useCrm((s) => s.setSearchOpen);
-  const companies = useCrm((s) => s.companies);
+  const companies = useCompanies();
   const openDetail = useCrm((s) => s.openDetail);
 
   const [query, setQuery] = useState("");

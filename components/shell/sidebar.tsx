@@ -26,15 +26,16 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCrm } from "@/lib/store";
 import { useSwipeDismiss } from "@/components/ui/use-swipe-dismiss";
+import { useNavBadges } from "./use-nav-badges";
 
 type NavItem = { label: string; icon?: LucideIcon; badge?: string; dot?: string; href?: string };
 
 const MAIN: NavItem[] = [
-  { label: "Companies", icon: Building2, badge: "241", href: "/companies" },
+  { label: "Companies", icon: Building2, href: "/companies" },
   { label: "Deals Board", icon: Clipboard, href: "/deals" },
-  { label: "Forecast", icon: ChartNoAxesColumn, badge: "9", href: "/forecast" },
+  { label: "Forecast", icon: ChartNoAxesColumn, href: "/forecast" },
   { label: "Activities", icon: List, href: "/activities" },
-  { label: "Contacts", icon: Book, badge: "38", href: "/contacts" },
+  { label: "Contacts", icon: Book, href: "/contacts" },
   { label: "Email Sequences", icon: Mail, href: "/sequences" },
   { label: "Invoices", icon: ReceiptText, href: "/invoices" },
 ];
@@ -123,6 +124,7 @@ function SidebarContent({
   onNavigate?: () => void;
   onClose?: () => void;
 }) {
+  const badges = useNavBadges();
   const setProfileOpen = useCrm((s) => s.setProfileOpen);
 
   return (
@@ -153,7 +155,7 @@ function SidebarContent({
           {MAIN.map((item) => (
             <NavRow
               key={item.label}
-              item={item}
+              item={{ ...item, badge: badges[item.label] ?? item.badge }}
               active={active === item.label}
               onClick={item.href ? onNavigate : undefined}
             />
@@ -174,7 +176,7 @@ function SidebarContent({
             {section.items.map((item) => (
               <NavRow
                 key={item.label}
-                item={item}
+                item={{ ...item, badge: badges[item.label] ?? item.badge }}
                 active={active === item.label}
                 onClick={item.href ? onNavigate : undefined}
               />

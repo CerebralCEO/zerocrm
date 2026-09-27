@@ -1,5 +1,6 @@
 "use client";
 
+import { useLiveContacts } from "@/lib/use-contacts";
 import { useMemo } from "react";
 import { useContacts } from "@/lib/contacts-store";
 import { useCrm } from "@/lib/store";
@@ -29,7 +30,8 @@ export function PersonaTag({ persona, className }: { persona: Persona; className
 
 /** Contacts after search, filters and sort. */
 export function useVisibleContacts() {
-  const { contacts, query, sortBy, persona, ownerFilter, show } = useContacts();
+  const { query, sortBy, persona, ownerFilter, show } = useContacts();
+  const contacts = useLiveContacts();
   const companies = useCrm((s) => s.companies);
   return useMemo(() => {
     const name = (id: string) => companies.find((c) => c.id === id)?.name ?? id;
