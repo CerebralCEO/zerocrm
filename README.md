@@ -86,6 +86,13 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Stage funnel** with conversion between stages, **when it closes** by month, **who carries it** by owner and the full deal list. Every chart is a filter.
 - Pipeline velocity, share of company pipeline, and **New Deal** that lands in the region's HQ city.
 
+### Invoices — from Closed Won to paid
+- **Raised from deals** — every Closed Won deal lands in *Ready to invoice*; one click creates a draft with line items that add up to the deal value and the account's economic buyer as the contact.
+- **Invoice studio** — a full-screen editor with a live A4 preview: edit lines, discount, tax and terms, then *Send* or *Mark as Paid*.
+- **34 premium templates** — 16 dark and 18 light, across ten layouts (classic, banner, sidebar, hero, split, ledger, editorial, card, swiss, band). Solid colour only, so they print exactly as they look.
+- **Download PDF** — a borderless, single-page A4 straight from the browser.
+- **Receivables** — outstanding, overdue, collected this quarter, average days to pay and an aging breakdown.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -172,6 +179,20 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   <tr>
     <td width="50%"><img src="./docs/screenshots/desktop-mid-market.png" alt="Mid Market team" /><p align="center"><sub><b>Mid Market</b> — same template, own roster</sub></p></td>
     <td width="50%"><img src="./docs/screenshots/desktop-sdr-team.png" alt="SDR Team" /><p align="center"><sub><b>SDR Team</b> — meetings, pacing, sourced pipeline</sub></p></td>
+  </tr>
+</table>
+
+### Invoices
+
+<p align="center">
+  <img src="./docs/screenshots/invoice-templates.png" alt="Twelve of the 34 invoice templates" width="100%" />
+  <br /><sub>12 of the <b>34 templates</b> — dark and light, all solid colour</sub>
+</p>
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-invoice-studio.png" alt="Invoice studio" /><p align="center"><sub><b>Invoice studio</b> — live preview and template gallery</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-invoices.png" alt="Invoices" /><p align="center"><sub><b>Invoices</b> — receivables, ready to invoice, every invoice</sub></p></td>
   </tr>
 </table>
 
@@ -272,7 +293,8 @@ zerocrm/
 │   │   ├── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
 │   │   ├── team/                 # strategic-aes · mid-market · sdr-team (one TeamPage template)
 │   │   ├── reports/              # q1-forecast · slipping-deals
-│   │   └── pipelines/            # north-america · emea-enterprise · apac-expansion
+│   │   ├── pipelines/            # north-america · emea-enterprise · apac-expansion
+│   │   └── invoices/             # Receivables, ready-to-invoice, invoice list
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -286,6 +308,7 @@ zerocrm/
 │   ├── team/                     # Team template (rep card, leaderboard, rep sheet) + sdr/ variant
 │   ├── reports/                  # q1/ (gauge, waterfall, deal map) · slipping/ (slip trail, sankey, review)
 │   ├── pipelines/                # Regional pipeline template: dot-matrix territory map, stage funnel
+│   ├── invoices/                 # Invoice studio, 10 document layouts, template gallery
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -357,6 +380,7 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Team views — Strategic AEs, Mid Market and SDR Team
 - [x] Reports — Q1 Forecast planner and Slipping Deals
 - [x] Regional pipelines — North America, EMEA Enterprise and APAC Expansion
+- [x] Invoices from Closed Won deals with 34 print-ready templates
 - [ ] Reporting and pipeline views from the sidebar
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering

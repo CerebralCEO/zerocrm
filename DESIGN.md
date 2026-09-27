@@ -627,6 +627,21 @@ components:
   owner-mix:
     bar: "10px bar split by owner, pipeline colour stepping down 16% opacity per owner"
     rows: "leaderboard-row style: shade dot · avatar · name · deals · $ · share %"
+  invoice-studio:
+    container: "full-screen dialog on {colors.canvas} (sheet-up on phones, pop-in from md); 56px header with close, number + status tag, Download PDF, one primary action"
+    stage: "the page scaled to fit (max 100%), 1px {colors.border-card} ring + 0 24px 64px rgba(0,0,0,.55) — the paper is the one object that floats on the page; phones give it 62dvh"
+    panel: "424px from lg; segmented-control Templates · Details; gallery = 2-up thumbnails (3-up on tablets) with a 2px {colors.ink} ring when selected, a bg/accent swatch, name and layout"
+    details: "section-label groups (Dates · Line items · Adjustments · Notes), line items as {colors.surface-card} cards, a totals summary; paid invoices are locked"
+  invoice-status:
+    tones: "Draft tag-neutral · Sent tag-blue · Viewed tag-purple · Paid tag-land · Overdue tag-red (derived: sent/viewed past due)"
+  aging-bar:
+    buckets: "Current {colors.meter-green} · 1–30 {colors.meter-amber} · 31–60 tag-orange text (#fed7aa) · 60+ {colors.meter-red}"
+  invoice-template:
+    page: "A4 at 96 dpi (794 × 1123), laid out once and scaled for previews, thumbnails and print"
+    colour: "every value a solid hex — tints are pre-mixed with mix(), never opacity; the page prints with print-color-adjust: exact"
+    layouts: "classic · banner · sidebar · hero · split · ledger · editorial · card · swiss · band"
+    voices: "Geist (sans), Geist Mono (ledger/mono), Instrument Serif (editorial titles and figures)"
+    library: "34 templates, 16 dark and 18 light, in lib/invoice-templates.ts"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -820,6 +835,8 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **Q1 Forecast** (`/reports/q1-forecast`, `components/reports/q1`) — next fiscal year's first quarter (FQ1 FY28, Feb–Apr) planned from today: KPI strip (quota, open Q1 pipeline + coverage, projected bookings, days to Q1), the `radial-gauge` with the scenario planner underneath (`segmented-control` presets + three sliders: win rate, weekly pipeline creation, FQ4 slip-in), a `waterfall` *Path to quota* (renewals → weighted open pipeline → FQ4 slip-in → new pipeline × win rate → projected → gap) with `scenario-tile`s, a `bubble-chart` *Q1 deal map*, a *Monthly plan* (stacked pipeline/weighted bars vs. target markers) and *Rep readiness* (coverage meter + Ready ≥1.5× `tag-land` / Building ≥0.75× `tag-yellow` / Thin `tag-red`; tapping a rep re-plans the page for them). Scenario changes glide (bars, tick, tweened numbers); owner changes replay the entrances.
 - **Slipping Deals** (`/reports/slipping-deals`, `components/reports/slipping`) — open deals whose close date has moved later or passed. KPI strip (slipped value, pushed out of quarter, average slip, repeat slippers), the `slip-trail` hero, then *Quarter flow* (`sankey`), *Why deals slip* (reason tags with share bars in the tag's text colour, days lost + pushes) and *Slip by rep* (slip rate meter, top 7 with an *All* toggle). *Start Review* opens the `review-deck`; recommitting writes the new date to the deals store and records the push, so the board, forecast and trail all update.
 - **Pipeline pages** (`/pipelines/north-america`, `/pipelines/emea-enterprise`, `/pipelines/apac-expansion`, all rendered by `PipelinePage`) — every deal is sold into an account *site* (city) and each site belongs to one pipeline (`lib/pipelines.ts`), so one company can appear in several regions. Page: toolbar (Closing window · Owner · Export · *New Deal*, preset to the pipeline's HQ city), KPI strip (open pipeline + share of company pipeline, weighted, closed won, pipeline velocity = weighted ÷ average days to close), the `dot-matrix-map` beside `territory-row`s, the `stage-funnel`, *When it closes* (monthly bars Aug → Apr stacked by stage colour with a Today divider) beside `owner-mix`, and the deal list (12 rows, *Show all*). The city (map/list), the stage (funnel) and the owner (owner mix) all focus the page; focus chips on the deal list clear them. The pipeline colour appears only on its own page.
+- **Invoices** (`/invoices`, `components/invoices`) — every invoice is raised from a Closed Won deal (lines prefilled so they sum to the deal value; the bill-to contact is the account's economic buyer). Page: toolbar (Status · Owner · Export · *New Invoice* → deal picker), KPI strip (outstanding, overdue, collected this quarter, average days to pay), *Receivables aging* (`aging-bar` + bucket rows) beside *Ready to invoice* (won deals without an invoice, each with an *Invoice* pill) and the default-template picker, then the invoice list (mono number, account, deal, dates with "+n d" when late, amount, `invoice-status` tag, template swatch, owner). Rows open the `invoice-studio`, which is mounted app-wide so the deal sheet's *Create invoice / View invoice* works from any page. *Download PDF* prints only the page through a body-level portal (`@page A4, margin 0`).
+- **Invoice templates** — the only place other palettes appear, and only *inside the paper*. Each template = one of ten layouts + palette + type voice; both tones cover every layout family. Templates never use transparency, gradients or shadows; depth comes from solid fills (bands, sidebars, total blocks) and rules. The app chrome around them follows this document as usual.
 - **Email Sequences page** — KPI strip (with `%` suffix values), then a master/detail split: `sequence-row` list (380px) and the detail (title + status pill + goal + `switch`, four stat tiles, `step-card` stepper with *Add step*, and the enrolled list with *Enroll contacts*). Below `lg` it becomes iOS navigation: the list is the root screen and the detail pushes in from the right (`sheet-in`) with a "‹ Sequences" back bar.
 - **Step editor sheet** — `segmented-control` for the step type, `delay-stepper`, subject + message with one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` chips that insert at the cursor, and a live preview rendered for the first enrolled contact. Delete lives bottom-left in `{colors.alert}`.
 - **Contact sheet** — header (52px avatar, name, role · company, star), persona tags, four `action-tile`s, `info-row`s, relationship (28px score, account-touch sparkline, 64-segment meter), open deals and recent activity. *Log Activity* opens the log dialog prefilled with the contact's company.
@@ -886,6 +903,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Topbar** → hamburger added, user pill shows avatar only.
 - **Q1 Forecast** → gauge/planner, waterfall, deal map and monthly plan stack below `lg`; waterfall labels switch to short names and hints hide on phones; bubbles shrink (max 18px) and lose their labels; rep readiness is one column below `xl` and hides deals / pipeline progressively.
 - **Slipping Deals** → trail rows become label-over-track on phones (value + slip badge beside the name), quarter labels shorten to "FQ3", alternate month labels hide; the three bottom panels stack below `xl`; the review deck is a bottom sheet with a 2×2 action grid.
+- **Invoices** → the aging and ready panels stack below `lg`; list rows become two-line (company over number · due) with amount and status; the studio stacks the preview (62dvh) over the panel and scrolls as one page; the header drops the company logo and the Download label.
 - **Pipeline pages** → KPI strip 2×2; the territory list drops under the map below `lg`; map labels hide on phones; funnel stage names truncate and the 'here' suffix hides; deal rows become two-line (company over title · city) with value only.
 - **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; below `sm` risk rows become two-line (company over deal title, value over reason tag).
 
@@ -928,5 +946,6 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - Sequences don't actually send email; step stats are demo data.
 - Demo contacts are fictional and use reserved `.example` emails and 555-01xx phone numbers.
 - Timestamps are timezone-free local strings in the demo data; a real backend must supply the viewer's timezone.
+- Invoices are not emailed and "viewed" only comes from the seed data; PDF export uses the browser's print dialog (Save as PDF). Seller, bank and payment details are fictional placeholders.
 - Chart tooltips are pointer/touch driven; there is no keyboard scrubbing for the line chart yet.
 - Backdrop-blur strength and `linear()` spring rendering vary slightly by browser; they are not pixel tokens.

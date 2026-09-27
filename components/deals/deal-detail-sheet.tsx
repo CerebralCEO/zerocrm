@@ -6,6 +6,7 @@ import { useActivities } from "@/lib/activities-store";
 import { dateOf, dayLabel, formatTime } from "@/lib/activities";
 import { useCrm } from "@/lib/store";
 import { useDeals, isOverdue } from "@/lib/deals-store";
+import { useInvoices } from "@/lib/invoices-store";
 import { STAGES, stageById, type Deal, type DealActivity, type StageId } from "@/lib/deals";
 import { ownerById } from "@/lib/data";
 import { cn, formatNumber, formatShortDate } from "@/lib/utils";
@@ -192,6 +193,8 @@ export function DealDetailSheet() {
   const updateDeal = useDeals((s) => s.updateDeal);
   const moveDeal = useDeals((s) => s.moveDeal);
   const openCompany = useCrm((s) => s.openDetail);
+  const createInvoice = useInvoices((s) => s.createFromDeal);
+  const hasInvoice = useInvoices((s) => !!deal && s.invoices.some((i) => i.dealId === deal.id));
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
 
   const draft = deal ? drafts[deal.id] ?? { stage: deal.stage, probability: deal.probability, nextStep: deal.nextStep } : null;
@@ -222,7 +225,20 @@ export function DealDetailSheet() {
             View company
           </button>
           <div className="flex items-center gap-2">
-            <Button onClick={close}>Cancel</Button>
+            {deal?.stage === "won" && (
+              <Button
+                onClick={() => {
+                  const id = deal.id;
+                  close();
+                  createInvoice(id);
+                }}
+              >
+                {hasInvoice ? "View invoice" : "Create invoice"}
+              </Button>
+            )}
+            <Button onClick={close} className="max-sm:hidden">
+              Cancel
+            </Button>
             <Button
               variant="primary"
               onClick={() => {

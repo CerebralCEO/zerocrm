@@ -9,6 +9,7 @@ import {
   List,
   LocateFixed,
   Mail,
+  ReceiptText,
   MessageCircleQuestion,
   Target,
   TriangleAlert,
@@ -35,6 +36,7 @@ const MAIN: NavItem[] = [
   { label: "Activities", icon: List, href: "/activities" },
   { label: "Contacts", icon: Book, badge: "38", href: "/contacts" },
   { label: "Email Sequences", icon: Mail, href: "/sequences" },
+  { label: "Invoices", icon: ReceiptText, href: "/invoices" },
 ];
 
 const SECTIONS: { title: string; items: NavItem[] }[] = [

@@ -309,3 +309,28 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Invoices: the print copy lives off-screen; printing shows only it, as one borderless A4 page. */
+#invoice-print {
+  position: fixed;
+  top: 0;
+  left: -100000px;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+  body > *:not(#invoice-print) {
+    display: none !important;
+  }
+  #invoice-print {
+    position: static;
+  }
+}
