@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#161616" />
+<title>Offline · ZeroCRM</title>
+<link rel="icon" href="/favicon.ico" />
+<style>
+  /* Self-contained on purpose: this page must render with no network and no JavaScript bundle. */
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; background: #161616; color: #fafafa; text-align: center;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tile { display: flex; width: 52px; height: 52px; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; background: #2a2a2a; }
+  .tile img { width: 36px; height: 36px; border-radius: 8px; }
+  h1 { margin-top: 24px; font-size: 24px; line-height: 1; font-weight: 600; letter-spacing: -0.5px; }
+  p { margin-top: 12px; max-width: 340px; font-size: 14px; line-height: 20px; color: rgba(207,207,207,0.8); }
+  button { margin-top: 28px; height: 36px; padding: 0 16px; border-radius: 9999px; cursor: pointer;
+    border: 1px solid rgba(107,86,255,0.6); background: linear-gradient(#4a2ffc, #3a1fe6); color: #fff;
+    font: 500 13px/1 inherit; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); }
+  button:hover { filter: brightness(1.1); }
+  small { margin-top: 18px; font-size: 12px; color: #666767; }
+</style>
+</head>
+<body>
+  <div class="tile"><img src="/icons/icon-192.png" alt="" /></div>
+  <h1>You're offline</h1>
+  <p>ZeroCRM needs a connection to load your live pipeline. Anything you already changed is saved as soon as you're back.</p>
+  <button type="button" onclick="location.reload()">Try again</button>
+  <small>This page reloads on its own when the connection returns.</small>
+  <script>window.addEventListener("online", function () { location.reload(); });</script>
+</body>
+</html>

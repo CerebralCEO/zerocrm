@@ -1,7 +1,8 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { LogOut, Pencil, UserRound } from "lucide-react";
+import { Download, LogOut, Pencil, UserRound } from "lucide-react";
+import { installApp, usePwa } from "@/lib/pwa-store";
 import { AUTH_ENABLED, SIGN_IN_URL } from "@/lib/auth";
 import { useCurrentUser } from "@/lib/current-user";
 import { useProfile } from "@/lib/profile-store";
@@ -25,6 +26,7 @@ export function UserMenu() {
   const setProfileOpen = useCrm((s) => s.setProfileOpen);
   const openEditor = useProfile((s) => s.openEditor);
   const canEdit = useProfile((s) => s.required);
+  const canInstall = usePwa((s) => !!s.installPrompt && !s.installed);
 
   return (
     <Menu>
@@ -55,6 +57,12 @@ export function UserMenu() {
           <MenuItem onSelect={() => openEditor(true)}>
             <Pencil className="size-[14px] text-fg-muted" strokeWidth={1.75} />
             Edit profile
+          </MenuItem>
+        )}
+        {canInstall && (
+          <MenuItem onSelect={() => void installApp()}>
+            <Download className="size-[14px] text-fg-muted" strokeWidth={1.75} />
+            Install ZeroCRM app
           </MenuItem>
         )}
         {AUTH_ENABLED && (

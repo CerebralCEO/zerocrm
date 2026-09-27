@@ -93,6 +93,11 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Download PDF** — a borderless, single-page A4 straight from the browser.
 - **Receivables** — outstanding, overdue, collected this quarter, average days to pay and an aging breakdown.
 
+### Installable app (PWA)
+- **Install ZeroCRM** from the browser (desktop Chrome/Edge, Android) or *Add to Home Screen* on iOS — it opens in its own window with the ZeroCRM icon, and the avatar menu offers **Install ZeroCRM app** when the browser allows it.
+- Home-screen shortcuts to Deals, Forecast, Activities and Invoices; maskable icons for Android.
+- A service worker caches only the app shell (build assets, icons) and shows a self-contained **offline** screen when there's no connection — live data always comes from Neon, so nothing goes stale.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -414,6 +419,7 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Neon Postgres + Drizzle with seed data and write-through sync
 - [x] Clerk authentication with a custom sign-in / sign-up, onboarding profile and account menu
 - [x] Realtime across tabs, users and devices over Neon (change polling + tombstones)
+- [x] Installable PWA with offline screen and app shortcuts
 - [ ] Organizations (multi-workspace) and role-based access
 - [ ] Push-based realtime (Postgres logical replication / WebSockets) instead of polling
 - [ ] Authentication and team workspaces

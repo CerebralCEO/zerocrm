@@ -950,6 +950,12 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **`user-menu`** — the topbar user pill (20px face + name) opens a `menu` 248px wide, aligned right: a header with a 32px face, name (`{typography.body-strong}`) and email (`{typography.label}` muted), then *My Profile*, *Edit profile* and, after a separator, *Sign out* in `{colors.alert}`. Faces use the Clerk photo when present, else the DiceBear avatar.
 - **`onboarding-modal`** — the standard `{components.dialog}` / bottom sheet, but `dismissible={false}` until saved (no close button, Esc, outside click or swipe). Sections: live identity preview (52px face, name, role · team), *About you* (first/last name, read-only work email), *Your role* (free-text role with one-tap role chips, team select, region `segmented-control`), *Contact* (phone, auto-detected time zone, 280-char bio). Validation and server errors replace the "* required" note in the footer so they're always visible. The same form edits the profile later (dismissible, with Cancel).
 
+## App shell (PWA)
+- **Icons** — the ZeroCRM glyph in `{colors.ink}`-white on a `{colors.canvas}` rounded square (radius 21%, glyph 63% wide) for `any` icons; full-bleed `{colors.canvas}` with the glyph at 50% for `maskable`; full-bleed at 60% for the Apple touch icon. Generated from the brand mark at 4× and re-thresholded so edges stay crisp at 512px.
+- **Manifest** — `display: standalone`, `background_color` and `theme_color` `{colors.canvas}`, start URL `/companies`.
+- **Offline screen** (`public/offline.html`) — fully self-contained (inline CSS, no JS bundle): 52px icon tile, 24px/600 title, body copy at 80% `{colors.body}`, a 36px primary pill *Try again*, and it reloads itself on `online`.
+- **Offline pill** — while the device is offline inside the app: a 30px pill in the `tag-yellow` palette, bottom-centre above the safe area.
+
 ## Known Gaps
 - **Light theme:** not designed; the system is dark-only.
 - **Error / validation states** exist only for the Company name field and the logo upload; no global toast/banner system yet.

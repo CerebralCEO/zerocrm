@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { AFTER_AUTH_URL, AUTH_ENABLED, SIGN_IN_URL, SIGN_UP_URL } from "@/lib/auth";
+import { Pwa } from "@/components/shell/pwa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,9 @@ export const metadata: Metadata = {
   description: "ZeroCRM — an open-source, pixel-perfect sales CRM pipeline built with Next.js.",
   authors: [{ name: "ZeroFounder" }],
   creator: "ZeroFounder",
+  applicationName: "ZeroCRM",
+  appleWebApp: { capable: true, title: "ZeroCRM", statusBarStyle: "black" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -51,6 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         ) : (
           children
         )}
+        <Pwa />
       </body>
     </html>
   );
