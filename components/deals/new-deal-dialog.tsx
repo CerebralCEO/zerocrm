@@ -34,7 +34,17 @@ function Divider() {
 }
 
 /** Keyed by open/stage so every opening starts from a fresh form. */
-function NewDealForm({ initialStage, initialClose, onDone }: { initialStage: StageId; initialClose: string | null; onDone: () => void }) {
+function NewDealForm({
+  initialStage,
+  initialClose,
+  siteId,
+  onDone,
+}: {
+  initialStage: StageId;
+  initialClose: string | null;
+  siteId: string | null;
+  onDone: () => void;
+}) {
   const companies = useCrm((s) => s.companies);
   const addDeal = useDeals((s) => s.addDeal);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +76,7 @@ function NewDealForm({ initialStage, initialClose, onDone }: { initialStage: Sta
       value: Number(form.value) || 50000,
       probability: form.probability,
       nextStep: "Schedule a discovery call",
+      ...(siteId ? { siteId } : {}),
     });
     onDone();
   };
@@ -203,6 +214,7 @@ export function NewDealDialog() {
   const stage = useDeals((s) => s.newDealStage);
   const close = useDeals((s) => s.closeNewDeal);
   const closeDate = useDeals((s) => s.newDealClose);
+  const siteId = useDeals((s) => s.newDealSite);
 
   return (
     <Modal
@@ -211,7 +223,7 @@ export function NewDealDialog() {
       title="New Deal"
       description="Add a deal to the board. It lands in the stage you pick."
     >
-      {open && <NewDealForm key={stage} initialStage={stage} initialClose={closeDate} onDone={close} />}
+      {open && <NewDealForm key={stage} initialStage={stage} initialClose={closeDate} siteId={siteId} onDone={close} />}
     </Modal>
   );
 }

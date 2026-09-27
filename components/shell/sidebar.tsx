@@ -56,9 +56,9 @@ const SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: "Pipelines",
     items: [
-      { label: "North America", dot: "#ffdb4b" },
-      { label: "EMEA Enterprise", dot: "#f25c8f" },
-      { label: "APAC Expansion", dot: "#8b7bff" },
+      { label: "North America", dot: "#ffdb4b", href: "/pipelines/north-america" },
+      { label: "EMEA Enterprise", dot: "#f25c8f", href: "/pipelines/emea-enterprise" },
+      { label: "APAC Expansion", dot: "#8b7bff", href: "/pipelines/apac-expansion" },
     ],
   },
 ];

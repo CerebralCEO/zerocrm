@@ -58,6 +58,10 @@ colors:
   series-best: "rgba(253,230,138,0.5)"            # best-case upside (dashed, lighter amber)
   series-pipeline: "{colors.meter-empty}"         # early-stage remainder
   series-target: "{colors.primary-border}"        # quota / target lines — dashed, never filled
+  # Pipeline identity colours — the sidebar dots; used only on that pipeline's own page (map heat, site markers, owner-mix shades)
+  pipeline-na: "#ffdb4b"
+  pipeline-emea: "#f25c8f"
+  pipeline-apac: "#8b7bff"
   # Activity heatmap levels (0 → 4)
   heat-0: "rgba(255,255,255,0.05)"
   heat-1: "rgb(0 181 98 / 0.28)"
@@ -603,6 +607,26 @@ components:
     container: "{components.dialog}; progress = one 10×4px pill per deal (done green, current ink, pending empty)"
     card: "{colors.surface-card} card with date chips (current chip tinted by severity), three figures and a stage tag; enters with deck-in (460ms --ease-ios)"
     actions: "four 74px action tiles (Keep · +2 weeks · Next quarter · Mark won) + a native date input; toggle-tag reasons"
+  dot-matrix-map:
+    grid: "84 columns of land cells from Natural Earth 1:50m (lib/pipeline-maps.ts), square after cos(latitude) scaling; 10-unit cells, 2.3-unit dots"
+    land: "white at 8.5% — one <path> for all base dots"
+    heat: "Σ value-weighted Gaussian (σ 3.6 cells) from each site; 4 levels in the pipeline colour at 20 / 36 / 56 / 85%"
+    markers: "r = 7 + √(share) × 15, pipeline colour at 16% fill (34% active) with a 1.5px ring (2.5px active) and a 3.5-unit centre dot"
+    labels: "top six sites that don't collide, 17-unit Geist 500 in {colors.body} with a canvas halo; hidden on phones"
+    size: "full width up to 600px tall, centred; beside a 340px territory list from lg"
+    motion: "land scans in with reveal, heat fades in by level, markers bubble-in 60ms apart"
+  territory-row:
+    height: "52px min"
+    content: "8px pipeline dot · city {typography.body-strong} + country {typography.label} · compact $ · 4px share bar in the pipeline colour · deal count"
+    behaviour: "hover lights the map marker; tap focuses the deal list on the city"
+  stage-funnel:
+    height: 200px
+    bars: "one per stage, height ∝ value that reached it (at or beyond), 30% of column (max 56px), stage tag text colour at 90% (25% when another stage is focused)"
+    bands: "cubic tapered joins in white 5%; conversion % in a 22px canvas pill on each band"
+    labels: "stage {typography.control} + reached $ 16px/500 above, 'n here' below"
+  owner-mix:
+    bar: "10px bar split by owner, pipeline colour stepping down 16% opacity per owner"
+    rows: "leaderboard-row style: shade dot · avatar · name · deals · $ · share %"
   stage-track:
     segments: "5 × 6px bars, 4px gap, {rounded.bar}"
     filled: "{colors.meter-green} (completed + current)"
@@ -795,6 +819,7 @@ No photography. Imagery is limited to square brand logos on `logo-tile` (radius 
 - **SDR variant** — same page skeleton with meetings as the quota: KPI strip (meetings booked + pacing, pipeline sourced, connect rate, activities), `sdr-card`s, a leaderboard by meeting attainment and a *Sourced pipeline* list (deals an SDR created; values and stages come live from the deals store). The SDR sheet shows meetings, activity tiles, the partner AE and sourced deals; *AE deals* opens the board filtered to the partner.
 - **Q1 Forecast** (`/reports/q1-forecast`, `components/reports/q1`) — next fiscal year's first quarter (FQ1 FY28, Feb–Apr) planned from today: KPI strip (quota, open Q1 pipeline + coverage, projected bookings, days to Q1), the `radial-gauge` with the scenario planner underneath (`segmented-control` presets + three sliders: win rate, weekly pipeline creation, FQ4 slip-in), a `waterfall` *Path to quota* (renewals → weighted open pipeline → FQ4 slip-in → new pipeline × win rate → projected → gap) with `scenario-tile`s, a `bubble-chart` *Q1 deal map*, a *Monthly plan* (stacked pipeline/weighted bars vs. target markers) and *Rep readiness* (coverage meter + Ready ≥1.5× `tag-land` / Building ≥0.75× `tag-yellow` / Thin `tag-red`; tapping a rep re-plans the page for them). Scenario changes glide (bars, tick, tweened numbers); owner changes replay the entrances.
 - **Slipping Deals** (`/reports/slipping-deals`, `components/reports/slipping`) — open deals whose close date has moved later or passed. KPI strip (slipped value, pushed out of quarter, average slip, repeat slippers), the `slip-trail` hero, then *Quarter flow* (`sankey`), *Why deals slip* (reason tags with share bars in the tag's text colour, days lost + pushes) and *Slip by rep* (slip rate meter, top 7 with an *All* toggle). *Start Review* opens the `review-deck`; recommitting writes the new date to the deals store and records the push, so the board, forecast and trail all update.
+- **Pipeline pages** (`/pipelines/north-america`, `/pipelines/emea-enterprise`, `/pipelines/apac-expansion`, all rendered by `PipelinePage`) — every deal is sold into an account *site* (city) and each site belongs to one pipeline (`lib/pipelines.ts`), so one company can appear in several regions. Page: toolbar (Closing window · Owner · Export · *New Deal*, preset to the pipeline's HQ city), KPI strip (open pipeline + share of company pipeline, weighted, closed won, pipeline velocity = weighted ÷ average days to close), the `dot-matrix-map` beside `territory-row`s, the `stage-funnel`, *When it closes* (monthly bars Aug → Apr stacked by stage colour with a Today divider) beside `owner-mix`, and the deal list (12 rows, *Show all*). The city (map/list), the stage (funnel) and the owner (owner mix) all focus the page; focus chips on the deal list clear them. The pipeline colour appears only on its own page.
 - **Email Sequences page** — KPI strip (with `%` suffix values), then a master/detail split: `sequence-row` list (380px) and the detail (title + status pill + goal + `switch`, four stat tiles, `step-card` stepper with *Add step*, and the enrolled list with *Enroll contacts*). Below `lg` it becomes iOS navigation: the list is the root screen and the detail pushes in from the right (`sheet-in`) with a "‹ Sequences" back bar.
 - **Step editor sheet** — `segmented-control` for the step type, `delay-stepper`, subject + message with one-tap `{{first_name}}` / `{{company}}` / `{{sender}}` chips that insert at the cursor, and a live preview rendered for the first enrolled contact. Delete lives bottom-left in `{colors.alert}`.
 - **Contact sheet** — header (52px avatar, name, role · company, star), persona tags, four `action-tile`s, `info-row`s, relationship (28px score, account-touch sparkline, 64-segment meter), open deals and recent activity. *Log Activity* opens the log dialog prefilled with the contact's company.
@@ -861,6 +886,7 @@ Visual controls stay 30px for density; on phones close buttons grow to 32px and 
 - **Topbar** → hamburger added, user pill shows avatar only.
 - **Q1 Forecast** → gauge/planner, waterfall, deal map and monthly plan stack below `lg`; waterfall labels switch to short names and hints hide on phones; bubbles shrink (max 18px) and lose their labels; rep readiness is one column below `xl` and hides deals / pipeline progressively.
 - **Slipping Deals** → trail rows become label-over-track on phones (value + slip badge beside the name), quarter labels shorten to "FQ3", alternate month labels hide; the three bottom panels stack below `xl`; the review deck is a bottom sheet with a 2×2 action grid.
+- **Pipeline pages** → KPI strip 2×2; the territory list drops under the map below `lg`; map labels hide on phones; funnel stage names truncate and the 'here' suffix hides; deal rows become two-line (company over title · city) with value only.
 - **Forecast grid** → panels stack into one column below `lg` (hairlines move from vertical to horizontal); line chart drops to 220px below 640px; leaderboard hides values and commit hints on phones; below `sm` risk rows become two-line (company over deal title, value over reason tag).
 
 ### Image Behavior
@@ -896,7 +922,7 @@ Logos are inline SVG (Simple Icons / hand-drawn); avatars are generated SVG data
 - **Loading / skeleton states** are not designed.
 - **Disabled states** are only generic (50% opacity).
 - Every page beyond Companies (Kanban, Forecast, Activities, Contacts, Email Sequences) was designed from this system without an external reference and is documented here as built.
-- The pipeline destinations (North America, EMEA Enterprise, APAC Expansion) have no pages yet (they show "Coming soon").
+- Pipeline sites are demo coordinates at city level; the maps are static region crops (no pan/zoom) and very close cities merge into one site (e.g. the SF Bay Area).
 - Q1 renewals ($480K) and the flat $300K rep Q1 quota are plan constants; close-date push history is seeded demo data (new pushes from the review are recorded live).
 - SDR call / email / meeting counts are roster demo data (sourced pipeline is live); FQ4 shows zeros because it hasn't started.
 - Sequences don't actually send email; step stats are demo data.

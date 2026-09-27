@@ -30,6 +30,9 @@ const TITLES: Record<string, string> = {
   "/team/sdr-team": "SDR Team",
   "/reports/q1-forecast": "Q1 Forecast",
   "/reports/slipping-deals": "Slipping Deals",
+  "/pipelines/north-america": "North America",
+  "/pipelines/emea-enterprise": "EMEA Enterprise",
+  "/pipelines/apac-expansion": "APAC Expansion",
 };
 
 export function Topbar() {

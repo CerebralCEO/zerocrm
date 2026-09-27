@@ -39,6 +39,8 @@ export type Deal = {
   nextStep: string;
   lastTouch: { type: InteractionType; date: string };
   activity: DealActivity[];
+  /** Account site the deal is sold into (see lib/pipelines.ts); seeds resolve it from a lookup. */
+  siteId?: string;
 };
 
 type Seed = [
@@ -101,6 +103,17 @@ const SEEDS: Seed[] = [
   ["d-zoom-events", "zoom", "Events platform upsell", 150000, "proposal", "oliver", 58, "2027-02-12", "Partner quote review", "Partner", "2026-09-23"],
   ["d-hubspot-apac", "hubspot", "APAC co-sell", 120000, "qualified", "chloe", 30, "2027-02-24", "Joint account plan", "QBR Call", "2026-09-18"],
   ["d-airbnb-exp", "airbnb", "Experiences host tools", 98000, "discovery", "drew", 14, "2027-03-30", "Pricing discovery", "Pricing", "2026-09-12"],
+  // Regional pipelines — APAC expansion and EMEA enterprise deals
+  ["d-netflix-kr", "netflix", "Korea studio analytics", 260000, "negotiation", "ricky", 72, "2026-10-22", "Final terms with the Seoul studio", "Pilot", "2026-09-23"],
+  ["d-apple-jp", "apple", "Japan retail analytics", 360000, "proposal", "alex", 48, "2026-11-26", "Proposal review with Apple Japan", "Exec", "2026-09-22"],
+  ["d-shopify-apac", "shopify", "APAC merchant launch", 240000, "qualified", "emma", 36, "2026-11-12", "Partner plan for ANZ merchants", "Expansion", "2026-09-19"],
+  ["d-stripe-in", "stripe", "India payments pilot", 150000, "proposal", "noah", 50, "2026-11-18", "Pilot scope with the Bengaluru team", "Demo", "2026-09-21"],
+  ["d-slack-jp", "slack", "Japan workspace expansion", 210000, "qualified", "ava", 40, "2026-12-15", "Localisation review", "Discovery", "2026-09-16"],
+  ["d-spotify-sea", "spotify", "SEA creator program", 180000, "discovery", "hannah", 20, "2026-12-08", "Scope creator tools for Jakarta", "Expansion", "2026-09-14"],
+  ["d-zoom-anz", "zoom", "ANZ Rooms rollout", 140000, "won", "oliver", 100, "2026-09-03", "Rollout kickoff in Melbourne", "Partner", "2026-09-03"],
+  ["d-google-anz", "google", "ANZ SMB program", 88000, "won", "kate", 100, "2026-08-18", "Program launch", "Renewal", "2026-08-18"],
+  ["d-ms-emea", "microsoft", "EMEA partner program", 290000, "proposal", "mark", 55, "2026-10-28", "Partner terms with Munich", "Pilot", "2026-09-24"],
+  ["d-disney-paris", "disney", "Disneyland Paris analytics", 230000, "qualified", "james", 38, "2026-11-30", "Ops review at the park", "Demo", "2026-09-20"],
 ];
 
 const KINDS: DealActivity["kind"][] = ["call", "email", "meeting", "note"];

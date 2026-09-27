@@ -81,6 +81,11 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
 - **Q1 Forecast** — plan next fiscal quarter from today: a 41-segment attainment gauge, a scenario planner (win rate, weekly pipeline creation, FQ4 slip-in) that re-lights it live, a *Path to quota* waterfall from renewals to the gap, side-by-side scenarios, a bubble map of every Q1 deal and rep readiness by coverage.
 - **Slipping Deals** — every deal whose close date moved, drawn as a trail from first commit to today, a quarter-flow Sankey, why deals slip and slip rate per rep. **Start Review** walks the list deal by deal: keep, push, move to next quarter or mark won, and the whole app updates.
 
+### Regional pipelines — North America, EMEA Enterprise & APAC Expansion
+- **Dot-matrix territory map** — the region drawn as dots, lit up in the pipeline's own colour wherever pipeline sits, with a marker for every account city. Hover for the city's numbers; tap to focus the page.
+- **Stage funnel** with conversion between stages, **when it closes** by month, **who carries it** by owner and the full deal list. Every chart is a filter.
+- Pipeline velocity, share of company pipeline, and **New Deal** that lands in the region's HQ city.
+
 ### Company workflow
 - **Company detail drawer** — account summary, pipeline health by stage (Discovery → Evaluation → Procurement), activity trend with touch breakdown, and editable **score cards** (star ratings saved on *Save Update*).
 - **New Company** dialog — logo upload (click or drag-and-drop, PNG/JPG/WebP/SVG ≤ 2 MB), segment, stage, owner, pipeline value, a live win-probability slider + meter, and last interaction. New rows appear instantly, glide into view and flash a soft accent.
@@ -170,6 +175,19 @@ Dark, dense and fast. Fully responsive from 375&nbsp;px phones to 4K monitors, w
   </tr>
 </table>
 
+### Regional pipelines
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-pipeline-na.png" alt="North America pipeline" /><p align="center"><sub><b>North America</b> — territory map and city ranking</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-pipeline-emea.png" alt="EMEA Enterprise pipeline" /><p align="center"><sub><b>EMEA Enterprise</b> — same template, its own colour</sub></p></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./docs/screenshots/desktop-pipeline-apac.png" alt="APAC Expansion pipeline" /><p align="center"><sub><b>APAC Expansion</b> — Tokyo to Auckland</sub></p></td>
+    <td width="50%"><img src="./docs/screenshots/desktop-pipeline-funnel.png" alt="Stage funnel" /><p align="center"><sub><b>Stage funnel</b> — conversion between stages</sub></p></td>
+  </tr>
+</table>
+
 ### Reports
 
 <table>
@@ -253,7 +271,8 @@ zerocrm/
 │   │   ├── contacts/page.tsx     # Contact cards / list, contact sheet, new-contact dialog
 │   │   ├── sequences/page.tsx    # Sequence list, stepper, step editor, enroll + new dialogs
 │   │   ├── team/                 # strategic-aes · mid-market · sdr-team (one TeamPage template)
-│   │   └── reports/              # q1-forecast · slipping-deals
+│   │   ├── reports/              # q1-forecast · slipping-deals
+│   │   └── pipelines/            # north-america · emea-enterprise · apac-expansion
 │   ├── globals.css               # Design tokens, motion curves, global UX rules
 │   ├── layout.tsx                # Root layout, fonts, metadata, viewport
 │   └── page.tsx                  # Redirects / → /companies
@@ -266,6 +285,7 @@ zerocrm/
 │   ├── sequences/                # Sequence list/detail, step cards, step editor, enroll dialog
 │   ├── team/                     # Team template (rep card, leaderboard, rep sheet) + sdr/ variant
 │   ├── reports/                  # q1/ (gauge, waterfall, deal map) · slipping/ (slip trail, sankey, review)
+│   ├── pipelines/                # Regional pipeline template: dot-matrix territory map, stage funnel
 │   ├── profile/                  # My Profile sheet
 │   ├── shell/                    # Sidebar (+ mobile drawer), topbar, notifications
 │   ├── primitives/               # Tag, SegmentedMeter, Sparkline, Checkbox, Avatar, CompanyLogo
@@ -336,6 +356,7 @@ Every colour and measurement was sampled from the reference design and lives as 
 - [x] Email Sequences with stepper, step editor and enrollments
 - [x] Team views — Strategic AEs, Mid Market and SDR Team
 - [x] Reports — Q1 Forecast planner and Slipping Deals
+- [x] Regional pipelines — North America, EMEA Enterprise and APAC Expansion
 - [ ] Reporting and pipeline views from the sidebar
 - [ ] Inline editing and bulk actions for selected rows
 - [ ] Real "Last activity" window filtering
